@@ -3,6 +3,7 @@
 #include "core/types.h"
 #include "ecs/entity.h"
 #include "physics/aabb.h"
+#include "physics/circle.h"
 
 #include <vector>
 
@@ -37,8 +38,12 @@ namespace CollisionLayer {
 }
 
 struct ColliderComponent {
+    enum class Shape { AABB, Circle };
+    Shape shape = Shape::AABB;
+
     Vec2 half_size = { 16.0f, 16.0f };
     Vec2 offset = { 0.0f, 0.0f };
+    float radius = 16.0f;  // used when shape == Circle
     bool is_trigger = false;
 
     // collision filtering
@@ -54,6 +59,14 @@ struct ColliderComponent {
         Vec2 center = position + offset;
         return AABB::from_center(center, half_size);
     }
+
+    Circle get_circle(const Vec2& position) const {
+        return { position + offset, radius };
+    }
 };
+
+// test collision between two colliders at their world positions
+CollisionManifold test_collision(const ColliderComponent& a, const Vec2& pos_a,
+                                 const ColliderComponent& b, const Vec2& pos_b);
 
 } // namespace kairo

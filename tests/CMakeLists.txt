@@ -6,6 +6,7 @@ add_executable(kairo_tests
     test_events.cpp
     test_memory.cpp
     test_gameplay.cpp
+    test_phase9.cpp
 )
 
 target_include_directories(kairo_tests PRIVATE

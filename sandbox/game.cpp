@@ -4,6 +4,7 @@
 #include "core/log.h"
 #include "math/math_utils.h"
 
+#include <imgui.h>
 #include <cmath>
 #include <memory>
 
@@ -63,9 +64,19 @@ void GameplayScene::on_enter() {
     m_world.add_component(player, VelocityComponent{});
     m_world.add_component(player, PlayerTag{});
 
-    // background grid
-    int grid = 14;
-    float spacing = 50.0f;
+    // add physics to player
+    kairo::ColliderComponent player_col;
+    player_col.half_size = { 25.0f, 25.0f };
+    m_world.add_component(player, player_col);
+
+    kairo::RigidBodyComponent player_rb;
+    player_rb.set_mass(2.0f);
+    player_rb.restitution = 0.5f;
+    m_world.add_component(player, player_rb);
+
+    // spawn collidable entities in a grid
+    int grid = 10;
+    float spacing = 60.0f;
     float offset = (grid - 1) * spacing * 0.5f;
 
     for (int y = 0; y < grid; y++) {
@@ -81,13 +92,25 @@ void GameplayScene::on_enter() {
             float b = static_cast<float>(y) / grid;
             m_world.add_component(e, SpriteComponent{
                 { r * 0.4f + 0.1f, g, b * 0.4f + 0.1f, 0.9f },
-                { 22.0f, 22.0f },
+                { 24.0f, 24.0f },
                 static_cast<int>(kairo::RenderLayer::Background)
             });
 
-            float vx = std::sin(px * 0.02f) * 15.0f;
-            float vy = std::cos(py * 0.02f) * 15.0f;
+            // give entities some initial drift
+            float vx = std::sin(px * 0.03f) * 20.0f;
+            float vy = std::cos(py * 0.03f) * 20.0f;
             m_world.add_component(e, VelocityComponent{ { vx, vy, 0.0f } });
+
+            // add colliders and rigidbodies to all entities
+            kairo::ColliderComponent col;
+            col.half_size = { 12.0f, 12.0f };
+            m_world.add_component(e, col);
+
+            kairo::RigidBodyComponent rb;
+            rb.set_mass(0.5f);
+            rb.restitution = 0.6f;
+            rb.velocity = { vx, vy };
+            m_world.add_component(e, rb);
         }
     }
 
@@ -110,10 +133,45 @@ void GameplayScene::on_fixed_update(float dt) {
         }
     );
 
-    // movement
-    m_world.query<TransformComponent, VelocityComponent>(
-        [&](kairo::Entity, TransformComponent& t, VelocityComponent& v) {
-            t.position += v.velocity * dt;
+    // sync rigidbody velocity with VelocityComponent for player
+    m_world.query<VelocityComponent, kairo::RigidBodyComponent, PlayerTag>(
+        [&](kairo::Entity, VelocityComponent& vel, kairo::RigidBodyComponent& rb, PlayerTag&) {
+            rb.velocity = { vel.velocity.x, vel.velocity.y };
+        }
+    );
+
+    // collect physics bodies from ECS
+    std::vector<kairo::PhysicsBody> bodies;
+    m_world.query<TransformComponent, kairo::ColliderComponent>(
+        [&](kairo::Entity e, TransformComponent& t, kairo::ColliderComponent& col) {
+            kairo::PhysicsBody body;
+            body.entity = e;
+            body.position = { t.position.x, t.position.y };
+            body.collider = col;
+            if (m_world.has_component<kairo::RigidBodyComponent>(e)) {
+                body.rigidbody = &m_world.get_component<kairo::RigidBodyComponent>(e);
+            }
+            bodies.push_back(body);
+        }
+    );
+
+    // run physics
+    m_physics.step(bodies, dt);
+
+    // write positions back from physics
+    for (auto& body : bodies) {
+        if (m_world.is_alive(body.entity)) {
+            auto& t = m_world.get_component<TransformComponent>(body.entity);
+            t.position.x = body.position.x;
+            t.position.y = body.position.y;
+        }
+    }
+
+    // sync rigidbody velocity back to VelocityComponent
+    m_world.query<VelocityComponent, kairo::RigidBodyComponent>(
+        [&](kairo::Entity, VelocityComponent& vel, kairo::RigidBodyComponent& rb) {
+            vel.velocity.x = rb.velocity.x;
+            vel.velocity.y = rb.velocity.y;
         }
     );
 }
@@ -223,12 +281,68 @@ void PauseScene::on_render() {
 
 // ==================== Game (Application) ====================
 
+void Game::setup_inspector() {
+    // register component editors for the inspector panel
+    m_inspector_panel.register_component("Transform",
+        [](kairo::World& world, kairo::Entity entity) {
+            if (!world.has_component<TransformComponent>(entity)) return;
+            auto& t = world.get_component<TransformComponent>(entity);
+
+            if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
+                ImGui::DragFloat3("Position", &t.position.x, 1.0f);
+                ImGui::DragFloat3("Scale", &t.scale.x, 0.1f);
+                float deg = t.rotation * 180.0f / 3.14159f;
+                if (ImGui::DragFloat("Rotation", &deg, 1.0f)) {
+                    t.rotation = deg * 3.14159f / 180.0f;
+                }
+            }
+        }
+    );
+
+    m_inspector_panel.register_component("Sprite",
+        [](kairo::World& world, kairo::Entity entity) {
+            if (!world.has_component<SpriteComponent>(entity)) return;
+            auto& s = world.get_component<SpriteComponent>(entity);
+
+            if (ImGui::CollapsingHeader("Sprite", ImGuiTreeNodeFlags_DefaultOpen)) {
+                ImGui::ColorEdit4("Color", &s.color.x);
+                ImGui::DragFloat2("Size", &s.size.x, 1.0f);
+                ImGui::DragInt("Layer", &s.layer, 1);
+            }
+        }
+    );
+
+    m_inspector_panel.register_component("Velocity",
+        [](kairo::World& world, kairo::Entity entity) {
+            if (!world.has_component<VelocityComponent>(entity)) return;
+            auto& v = world.get_component<VelocityComponent>(entity);
+
+            if (ImGui::CollapsingHeader("Velocity")) {
+                ImGui::DragFloat3("Velocity", &v.velocity.x, 1.0f);
+            }
+        }
+    );
+}
+
 void Game::on_init() {
     m_use_scenes = true;
+    setup_inspector();
     m_scenes.push(std::make_unique<GameplayScene>(m_scenes));
-    kairo::log::info("game initialized with scene system");
+    kairo::log::info("game initialized with scene system (F1 to toggle editor)");
 }
 
 void Game::on_shutdown() {
     kairo::log::info("game shutting down");
+}
+
+void Game::on_editor_ui(float fps, float dt, const kairo::Renderer::Stats& stats) {
+    // get the active scene's world for the panels
+    auto* active = m_scenes.get_active();
+    if (!active) return;
+
+    auto& world = active->get_world();
+
+    m_stats_panel.draw(fps, dt, stats, world.entity_count());
+    m_hierarchy_panel.draw(world);
+    m_inspector_panel.draw(world, m_hierarchy_panel.get_selected());
 }

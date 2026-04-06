@@ -4,6 +4,10 @@
 #include "scene/scene.h"
 #include "scene/scene_serializer.h"
 #include "graphics/texture.h"
+#include "editor/editor_panels.h"
+#include "physics/physics_world.h"
+#include "physics/collision.h"
+#include "physics/rigidbody.h"
 #include "math/vec2.h"
 #include "math/vec3.h"
 #include "math/vec4.h"
@@ -44,6 +48,7 @@ public:
 private:
     kairo::SceneManager& m_scenes;
     kairo::SceneSerializer m_serializer;
+    kairo::PhysicsWorld m_physics;
     kairo::Texture m_checkerboard;
     float m_player_speed = 350.0f;
     float m_time = 0.0f;
@@ -71,4 +76,12 @@ class Game : public kairo::Application {
 public:
     void on_init() override;
     void on_shutdown() override;
+    void on_editor_ui(float fps, float dt, const kairo::Renderer::Stats& stats) override;
+
+private:
+    kairo::StatsPanel m_stats_panel;
+    kairo::HierarchyPanel m_hierarchy_panel;
+    kairo::InspectorPanel m_inspector_panel;
+
+    void setup_inspector();
 };

@@ -27,6 +27,9 @@ void PhysicsWorld::integrate(std::vector<PhysicsBody>& bodies, float dt) {
         // light damping
         rb.velocity = rb.velocity * 0.999f;
 
+        // integrate position
+        body.position += rb.velocity * dt;
+
         // clear forces
         rb.force = { 0.0f, 0.0f };
     }

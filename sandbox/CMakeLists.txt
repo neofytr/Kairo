@@ -1,4 +1,4 @@
-add_executable(sandbox main.cpp)
+add_executable(sandbox main.cpp game.cpp)
 
 target_link_libraries(sandbox PRIVATE kairo_engine)
 

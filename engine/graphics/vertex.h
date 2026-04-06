@@ -6,12 +6,11 @@
 
 namespace kairo {
 
-// vertex layout for 2D quads — position, color, and tex coords
-// keeping vec3 position so it extends naturally to 3D
 struct Vertex {
     Vec3 position;
     Vec4 color;
     Vec2 tex_coords;
+    float tex_index = 0.0f; // which texture slot this vertex uses
 };
 
 } // namespace kairo

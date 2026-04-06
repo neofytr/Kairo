@@ -19,6 +19,10 @@ add_library(glad STATIC
 )
 target_include_directories(glad PUBLIC external/glad/include)
 
+# stb (bundled, header-only with implementation in .cpp)
+add_library(stb STATIC external/stb/stb_image_impl.cpp)
+target_include_directories(stb PUBLIC external/stb)
+
 # OpenGL
 find_package(OpenGL REQUIRED)
 

@@ -11,5 +11,6 @@ target_include_directories(kairo_engine PUBLIC
 target_link_libraries(kairo_engine PUBLIC
     glfw
     glad
+    stb
     OpenGL::GL
 )

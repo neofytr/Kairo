@@ -20,7 +20,8 @@
       "Read(//usr/**)",
       "Bash(/tmp/glad-env/bin/cmake --version)",
       "Bash(/tmp/glad-env/bin/cmake -B build -DCMAKE_BUILD_TYPE=Debug)",
-      "Bash(/tmp/glad-env/bin/cmake --build build)"
+      "Bash(/tmp/glad-env/bin/cmake --build build)",
+      "Bash(curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image.h -o /home/raj/Desktop/Kairo/external/stb/stb_image.h)"
     ]
   }
 }

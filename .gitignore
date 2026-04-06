@@ -2,6 +2,7 @@ build/
 cmake-build-*/
 .cache/
 .vscode/
+.claude
 .idea/
 *.o
 *.a

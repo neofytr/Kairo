@@ -14,5 +14,7 @@ target_link_libraries(kairo_engine PUBLIC
     glad
     stb
     imgui
+    lua
+    miniaudio
     OpenGL::GL
 )

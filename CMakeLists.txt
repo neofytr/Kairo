@@ -36,6 +36,17 @@ add_library(imgui STATIC
 target_include_directories(imgui PUBLIC external/imgui)
 target_link_libraries(imgui PUBLIC glfw)
 
+# miniaudio (bundled, single-header with implementation)
+add_library(miniaudio STATIC external/miniaudio/miniaudio_impl.cpp)
+target_include_directories(miniaudio PUBLIC external/miniaudio)
+target_link_libraries(miniaudio PRIVATE dl pthread m)
+
+# Lua 5.4 (bundled source)
+file(GLOB LUA_SOURCES external/lua/*.c)
+add_library(lua STATIC ${LUA_SOURCES})
+target_include_directories(lua PUBLIC external/lua)
+target_compile_definitions(lua PRIVATE LUA_USE_LINUX)
+
 # OpenGL
 find_package(OpenGL REQUIRED)
 

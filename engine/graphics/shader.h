@@ -16,10 +16,7 @@ public:
     Shader(const Shader&) = delete;
     Shader& operator=(const Shader&) = delete;
     Shader(Shader&& other) noexcept : m_id(other.m_id) { other.m_id = 0; }
-    Shader& operator=(Shader&& other) noexcept {
-        if (this != &other) { if (m_id) { /* cleanup handled in destructor */ } m_id = other.m_id; other.m_id = 0; }
-        return *this;
-    }
+    Shader& operator=(Shader&& other) noexcept;
 
     // load from file paths
     bool load(const std::string& vert_path, const std::string& frag_path);

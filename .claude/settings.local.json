@@ -25,7 +25,24 @@
       "Bash(/tmp/glad-env/bin/cmake -B build)",
       "Bash(curl -sL https://github.com/nlohmann/json/releases/download/v3.11.3/json.hpp -o /home/raj/Desktop/Kairo/external/nlohmann/json.hpp)",
       "Bash(curl -sL \"https://raw.githubusercontent.com/ocornut/imgui/master/backends/imgui_impl_glfw.cpp\" -o /home/raj/Desktop/Kairo/external/imgui/imgui_impl_glfw.cpp)",
-      "Bash(/tmp/glad-env/bin/cmake --build build --clean-first)"
+      "Bash(/tmp/glad-env/bin/cmake --build build --clean-first)",
+      "Bash(ls /usr/include/lua*)",
+      "Bash(pkg-config --libs lua5.4)",
+      "Bash(pkg-config --libs lua5.3)",
+      "Read(//tmp/**)",
+      "Bash(curl -sL https://www.lua.org/ftp/lua-5.4.7.tar.gz -o lua.tar.gz)",
+      "Bash(tar xzf:*)",
+      "Bash(ls lua-5.4.7/src/*.h)",
+      "Bash(ls lua-5.4.7/src/*.c)",
+      "Bash(cp /tmp/lua-5.4.7/src/*.h /tmp/lua-5.4.7/src/*.c /home/raj/Desktop/Kairo/external/lua/)",
+      "Bash(ls /home/raj/Desktop/Kairo/external/lua/*.c)",
+      "Bash(ls -d /home/raj/Desktop/Kairo/engine/*/)",
+      "Bash(sed 's|.*/engine/||')",
+      "Bash(find /home/raj/Desktop/Kairo/engine/graphics/debug_draw.* /home/raj/Desktop/Kairo/engine/graphics/camera_controller.* /home/raj/Desktop/Kairo/engine/gameplay/ -type f)",
+      "Bash(curl -sL https://raw.githubusercontent.com/mackron/miniaudio/master/miniaudio.h -o /home/raj/Desktop/Kairo/external/miniaudio/miniaudio.h)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

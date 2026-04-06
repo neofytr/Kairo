@@ -3,6 +3,7 @@
 #include "graphics/camera.h"
 #include "graphics/shader.h"
 #include "graphics/texture.h"
+#include "graphics/font.h"
 #include "math/vec2.h"
 #include "math/vec3.h"
 #include "math/vec4.h"
@@ -44,6 +45,15 @@ public:
     static void draw_quad(const Vec3& position, const Vec2& size, float rotation,
                           const Texture& texture, const Vec2& uv_min, const Vec2& uv_max,
                           const Vec4& tint = { 1, 1, 1, 1 });
+
+    // text rendering
+    static void draw_text(const std::string& text, const Vec2& position, float scale = 2.0f,
+                          const Vec4& color = { 1, 1, 1, 1 });
+    static void draw_text(const Font& font, const std::string& text, const Vec2& position,
+                          float scale = 2.0f, const Vec4& color = { 1, 1, 1, 1 });
+
+    // get the built-in default font
+    static Font& get_default_font();
 
     struct Stats {
         int draw_calls = 0;

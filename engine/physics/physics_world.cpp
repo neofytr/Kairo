@@ -50,10 +50,13 @@ void PhysicsWorld::detect_collisions(const std::vector<PhysicsBody>& bodies) {
     // broadphase: get candidate pairs from spatial grid
     auto pairs = m_grid.get_potential_pairs();
 
-    // narrowphase: test each candidate pair
+    // narrowphase: test each candidate pair (filtered by collision layers)
     for (auto& [e_a, e_b] : pairs) {
         size_t idx_a = entity_index[e_a.id];
         size_t idx_b = entity_index[e_b.id];
+
+        // skip if collision layers don't allow interaction
+        if (!bodies[idx_a].collider.can_collide_with(bodies[idx_b].collider)) continue;
 
         AABB aabb_a = bodies[idx_a].collider.get_aabb(bodies[idx_a].position);
         AABB aabb_b = bodies[idx_b].collider.get_aabb(bodies[idx_b].position);

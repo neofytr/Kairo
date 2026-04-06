@@ -22,12 +22,34 @@ struct CollisionResult {
 };
 
 // component that gives an entity a collider
-struct ColliderComponent {
-    Vec2 half_size = { 16.0f, 16.0f }; // half-width, half-height
-    Vec2 offset = { 0.0f, 0.0f };      // offset from transform position
-    bool is_trigger = false;            // triggers detect overlap but don't resolve
+// collision layer bitmask — entities only collide if their masks overlap
+// layer: which layer this entity belongs to
+// mask: which layers this entity can collide with
+namespace CollisionLayer {
+    constexpr u16 None    = 0;
+    constexpr u16 Default = 1 << 0;
+    constexpr u16 Player  = 1 << 1;
+    constexpr u16 Enemy   = 1 << 2;
+    constexpr u16 Bullet  = 1 << 3;
+    constexpr u16 Wall    = 1 << 4;
+    constexpr u16 Pickup  = 1 << 5;
+    constexpr u16 All     = 0xFFFF;
+}
 
-    // build the world-space AABB from a position
+struct ColliderComponent {
+    Vec2 half_size = { 16.0f, 16.0f };
+    Vec2 offset = { 0.0f, 0.0f };
+    bool is_trigger = false;
+
+    // collision filtering
+    u16 layer = CollisionLayer::Default;  // what I am
+    u16 mask  = CollisionLayer::All;      // what I collide with
+
+    // check if two colliders should interact
+    bool can_collide_with(const ColliderComponent& other) const {
+        return (layer & other.mask) != 0 && (other.layer & mask) != 0;
+    }
+
     AABB get_aabb(const Vec2& position) const {
         Vec2 center = position + offset;
         return AABB::from_center(center, half_size);

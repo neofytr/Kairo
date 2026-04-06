@@ -2,6 +2,7 @@
 #include "core/application.h"
 #include "core/log.h"
 #include "graphics/renderer.h"
+#include "graphics/debug_draw.h"
 #include "input/input.h"
 #include "editor/imgui_layer.h"
 
@@ -22,7 +23,7 @@ bool Engine::init(const EngineConfig& config) {
         return false;
     }
 
-    // ImGui chains to our existing callbacks, so Input still gets events
+    DebugDraw::init();
     ImGuiLayer::init(m_window.get_native());
 
     m_time.init();
@@ -46,17 +47,17 @@ void Engine::run(Application& app) {
             break;
         }
 
-        // F1 toggles editor
         if (Input::is_key_pressed(Key::F1)) {
             ImGuiLayer::toggle();
         }
+        if (Input::is_key_pressed(Key::F2)) {
+            DebugDraw::toggle();
+        }
 
-        // scene transitions
         if (app.using_scenes()) {
             app.get_scenes().process_pending();
         }
 
-        // fixed timestep
         float fixed_dt = m_time.fixed_delta_time();
         while (m_time.accumulator() >= fixed_dt) {
             if (app.using_scenes()) {
@@ -67,7 +68,6 @@ void Engine::run(Application& app) {
             m_time.consume_accumulator(fixed_dt);
         }
 
-        // variable update
         if (app.using_scenes()) {
             app.get_scenes().update(m_time.delta_time());
         } else {
@@ -85,7 +85,7 @@ void Engine::run(Application& app) {
             app.on_render();
         }
 
-        // render ImGui on top
+        // ImGui on top
         ImGuiLayer::begin_frame();
         if (ImGuiLayer::is_visible()) {
             app.on_editor_ui(m_time.fps(), m_time.delta_time(), Renderer::get_stats());
@@ -96,10 +96,20 @@ void Engine::run(Application& app) {
     }
 
     app.on_shutdown();
+
+    // clear all scenes now while GL context is still alive
+    // prevents scene destructors from calling GL after context is gone
+    if (app.using_scenes()) {
+        while (!app.get_scenes().is_empty()) {
+            app.get_scenes().pop();
+            app.get_scenes().process_pending();
+        }
+    }
 }
 
 void Engine::shutdown() {
     ImGuiLayer::shutdown();
+    DebugDraw::shutdown();
     Renderer::shutdown();
     m_window.shutdown();
     log::info("engine shut down");

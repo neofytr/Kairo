@@ -10,7 +10,17 @@ namespace kairo {
 Shader::~Shader() {
     if (m_id) {
         glDeleteProgram(m_id);
+        m_id = 0;
     }
+}
+
+Shader& Shader::operator=(Shader&& other) noexcept {
+    if (this != &other) {
+        if (m_id) glDeleteProgram(m_id);
+        m_id = other.m_id;
+        other.m_id = 0;
+    }
+    return *this;
 }
 
 bool Shader::load(const std::string& vert_path, const std::string& frag_path) {

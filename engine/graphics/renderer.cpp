@@ -21,11 +21,11 @@ static struct RendererState {
     BatchRenderer batch;
     Shader shader;
     Texture white_texture;
+    Font default_font;
     Renderer::Stats stats;
 
     i32 current_layer = static_cast<i32>(RenderLayer::Default);
 
-    // deferred draw queue — sorted at end()
     std::vector<DrawCommand> draw_queue;
 } s_state;
 
@@ -58,12 +58,19 @@ bool Renderer::init() {
     // reserve space for the draw queue to avoid per-frame allocations
     s_state.draw_queue.reserve(4096);
 
+    s_state.default_font.create_default();
+
     log::info("renderer initialized (with layer sorting)");
     return true;
 }
 
 void Renderer::shutdown() {
     s_state.batch.shutdown();
+    // release GL resources now, while context is still alive
+    // move-assign empty objects so destructors at program exit are no-ops
+    s_state.shader = Shader{};
+    s_state.white_texture = Texture{};
+    s_state.default_font = Font{};
     log::info("renderer shut down");
 }
 
@@ -183,6 +190,46 @@ void Renderer::draw_quad(const Vec3& position, const Vec2& size, float rotation,
                           const Texture& texture, const Vec2& uv_min, const Vec2& uv_max,
                           const Vec4& tint) {
     enqueue_quad(position, size, rotation, uv_min, uv_max, tint, &texture);
+}
+
+void Renderer::draw_text(const std::string& text, const Vec2& position, float scale,
+                          const Vec4& color) {
+    draw_text(s_state.default_font, text, position, scale, color);
+}
+
+void Renderer::draw_text(const Font& font, const std::string& text, const Vec2& position,
+                          float scale, const Vec4& color) {
+    float cursor_x = position.x;
+    float cursor_y = position.y;
+
+    for (char c : text) {
+        if (c == '\n') {
+            cursor_x = position.x;
+            cursor_y -= font.get_line_height() * scale;
+            continue;
+        }
+
+        const Glyph* g = font.get_glyph(c);
+        if (!g) continue;
+
+        float gw = g->size.x * scale;
+        float gh = g->size.y * scale;
+        float gx = cursor_x + g->offset.x * scale + gw * 0.5f;
+        float gy = cursor_y - g->offset.y * scale - gh * 0.5f;
+
+        enqueue_quad(
+            Vec3(gx, gy, 0.0f),
+            Vec2(gw, gh), 0.0f,
+            g->uv_min, g->uv_max,
+            color, &font.get_texture()
+        );
+
+        cursor_x += g->advance * scale;
+    }
+}
+
+Font& Renderer::get_default_font() {
+    return s_state.default_font;
 }
 
 Renderer::Stats Renderer::get_stats() {

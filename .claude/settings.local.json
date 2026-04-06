@@ -46,7 +46,8 @@
       "Bash(find /home/raj/Desktop/Kairo/engine/graphics/framebuffer.* /home/raj/Desktop/Kairo/engine/graphics/post_process.* /home/raj/Desktop/Kairo/engine/graphics/shader_watcher.* /home/raj/Desktop/Kairo/engine/graphics/effects/ -type f)",
       "Bash(/tmp/glad-env/bin/cmake --build build --target kairo_engine)",
       "Bash(/tmp/glad-env/bin/cmake --build build --target kairo_tests)",
-      "Bash(./kairo_tests)"
+      "Bash(./kairo_tests)",
+      "Bash(./build/bin/kairo_tests)"
     ]
   }
 }

@@ -13,6 +13,10 @@
 #include "particles/particle_emitter.h"
 #include "scripting/script_engine.h"
 #include "audio/audio.h"
+#include "graphics/post_process.h"
+#include "graphics/effects/bloom.h"
+#include "graphics/effects/vignette.h"
+#include "graphics/shader_watcher.h"
 #include "math/vec2.h"
 #include "math/vec3.h"
 #include "math/vec4.h"
@@ -72,6 +76,8 @@ private:
     kairo::CameraController m_cam_controller;
     kairo::ScriptEngine m_scripting;
     kairo::AudioSystem m_audio;
+    kairo::PostProcessStack m_post_process;
+    kairo::ShaderWatcher m_shader_watcher;
     kairo::Texture m_checkerboard;
 
     float m_player_speed = 350.0f;

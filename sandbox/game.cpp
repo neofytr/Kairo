@@ -226,6 +226,17 @@ void GameplayScene::on_enter() {
     m_scripting.init();
     m_audio.init();
     m_audio.set_master_volume(0.5f);
+
+    // post-processing
+    m_post_process.init(1280, 720);
+    auto bloom = std::make_unique<kairo::BloomEffect>();
+    bloom->set_threshold(0.6f);
+    bloom->set_intensity(0.4f);
+    m_post_process.add_effect(std::move(bloom));
+    auto vignette = std::make_unique<kairo::VignetteEffect>();
+    vignette->set_intensity(0.5f);
+    vignette->set_softness(0.6f);
+    m_post_process.add_effect(std::move(vignette));
     m_scripting.set_world(&m_world);
     m_scripting.load_file("assets/scripts/test.lua");
 
@@ -241,6 +252,7 @@ void GameplayScene::on_enter() {
 
 void GameplayScene::on_exit() {
     m_lights.shutdown();
+    m_post_process.shutdown();
     m_audio.shutdown();
     m_scripting.shutdown();
 }
@@ -413,9 +425,15 @@ void GameplayScene::on_update(float dt) {
         }
     );
     m_audio.update();
+    m_shader_watcher.check();
 }
 
 void GameplayScene::on_render() {
+    // render scene into post-processing framebuffer
+    if (m_post_process.has_effects()) {
+        m_post_process.begin_capture();
+    }
+
     kairo::Renderer::begin(m_camera);
 
     // render all entities
@@ -431,32 +449,6 @@ void GameplayScene::on_render() {
     m_player_trail.render(m_camera);
     m_hit_burst.render(m_camera);
     m_muzzle_flash.render(m_camera);
-
-    kairo::Renderer::end();
-
-    // === HUD pass — fixed camera so text doesn't move with the world ===
-    kairo::Camera hud_camera;
-    hud_camera.set_orthographic(1280.0f, 720.0f);
-
-    kairo::Renderer::begin(hud_camera);
-    kairo::Renderer::set_layer(kairo::RenderLayer::UI);
-
-    // score
-    char score_buf[64];
-    snprintf(score_buf, sizeof(score_buf), "SCORE %d", m_score);
-    kairo::Renderer::draw_text(score_buf, { -620, 330 }, 2.5f, { 0.9f, 0.95f, 1.0f, 1.0f });
-
-    // wave
-    char wave_buf[32];
-    snprintf(wave_buf, sizeof(wave_buf), "WAVE %d", m_wave);
-    kairo::Renderer::draw_text(wave_buf, { -620, 300 }, 2.0f, { 0.6f, 0.7f, 0.9f, 0.8f });
-
-    // controls hint (fades out after 5 seconds)
-    if (m_time < 5.0f) {
-        float alpha = std::max(0.0f, 1.0f - m_time / 5.0f);
-        kairo::Renderer::draw_text("WASD move  ARROWS shoot", { -230, -320 }, 2.0f,
-            { 0.6f, 0.6f, 0.7f, alpha });
-    }
 
     kairo::Renderer::end();
 
@@ -489,6 +481,11 @@ void GameplayScene::on_render() {
 
     m_lights.render(m_camera);
 
+    // apply post-processing (bloom + vignette) to the scene
+    if (m_post_process.has_effects()) {
+        m_post_process.end_and_apply();
+    }
+
     // debug draw — colliders, velocity arrows (F2 to toggle)
     m_world.query<TransformComponent, kairo::ColliderComponent>(
         [](kairo::Entity, TransformComponent& t, kairo::ColliderComponent& col) {
@@ -511,6 +508,29 @@ void GameplayScene::on_render() {
     );
 
     kairo::DebugDraw::render(m_camera);
+
+    // === HUD pass — after post-processing so text isn't bloomed/vignetted ===
+    kairo::Camera hud_camera;
+    hud_camera.set_orthographic(1280.0f, 720.0f);
+
+    kairo::Renderer::begin(hud_camera);
+    kairo::Renderer::set_layer(kairo::RenderLayer::UI);
+
+    char score_buf[64];
+    snprintf(score_buf, sizeof(score_buf), "SCORE %d", m_score);
+    kairo::Renderer::draw_text(score_buf, { -620, 330 }, 2.5f, { 0.9f, 0.95f, 1.0f, 1.0f });
+
+    char wave_buf[32];
+    snprintf(wave_buf, sizeof(wave_buf), "WAVE %d", m_wave);
+    kairo::Renderer::draw_text(wave_buf, { -620, 300 }, 2.0f, { 0.6f, 0.7f, 0.9f, 0.8f });
+
+    if (m_time < 5.0f) {
+        float alpha = std::max(0.0f, 1.0f - m_time / 5.0f);
+        kairo::Renderer::draw_text("WASD move  ARROWS shoot", { -230, -320 }, 2.0f,
+            { 0.6f, 0.6f, 0.7f, alpha });
+    }
+
+    kairo::Renderer::end();
 }
 
 void GameplayScene::on_pause() {

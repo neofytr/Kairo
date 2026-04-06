@@ -1,7 +1,6 @@
 #include "graphics/font.h"
 #include "core/log.h"
 
-#include <glad/glad.h>
 #include <fstream>
 #include <sstream>
 #include <cstring>
@@ -183,10 +182,11 @@ bool Font::create_default() {
         // register glyph
         char c = static_cast<char>(32 + ch);
         Glyph g;
+        // flip UV Y — OpenGL origin is bottom-left, font bitmap is top-to-bottom
         g.uv_min = { static_cast<float>(col * CHAR_W) / TEX_W,
-                     static_cast<float>(row * CHAR_H) / TEX_H };
-        g.uv_max = { static_cast<float>((col + 1) * CHAR_W) / TEX_W,
                      static_cast<float>((row + 1) * CHAR_H) / TEX_H };
+        g.uv_max = { static_cast<float>((col + 1) * CHAR_W) / TEX_W,
+                     static_cast<float>(row * CHAR_H) / TEX_H };
         g.size = { static_cast<float>(CHAR_W), static_cast<float>(CHAR_H) };
         g.offset = { 0, 0 };
         g.advance = static_cast<float>(CHAR_W);
@@ -194,32 +194,7 @@ bool Font::create_default() {
     }
 
     // upload to GPU
-    u32 tex_id;
-    glGenTextures(1, &tex_id);
-    glBindTexture(GL_TEXTURE_2D, tex_id);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, TEX_W, TEX_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-
-    // wrap in our Texture object via a small trick: create a Texture that owns this ID
-    // we'll store the raw ID and use it directly
-    // the m_atlas won't own it, we manage it manually
-    // actually let's just use the atlas texture properly
-    // we need to set m_atlas without going through load()
-
-    // hack: create a dummy 1x1 then overwrite its GL state
-    // better: add a method to Texture. For now, store font tex ID separately.
-    m_atlas.create_white(); // creates a 1x1 white
-    // replace the texture data
-    glBindTexture(GL_TEXTURE_2D, m_atlas.get_id());
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, TEX_W, TEX_H, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    // clean up the separately allocated texture
-    glDeleteTextures(1, &tex_id);
+    m_atlas.create_from_rgba(pixels.data(), TEX_W, TEX_H);
 
     m_line_height = static_cast<float>(CHAR_H);
 

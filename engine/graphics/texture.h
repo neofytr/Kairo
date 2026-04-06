@@ -39,6 +39,9 @@ public:
     // create a 1x1 white texture (used as default when no texture is bound)
     bool create_white();
 
+    // create from raw RGBA pixel data
+    bool create_from_rgba(const u8* data, i32 width, i32 height);
+
     void bind(u32 slot = 0) const;
     void unbind() const;
 

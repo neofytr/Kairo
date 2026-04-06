@@ -55,3 +55,6 @@ add_subdirectory(engine)
 
 # --- sandbox executable ---
 add_subdirectory(sandbox)
+
+# --- tests ---
+add_subdirectory(tests)

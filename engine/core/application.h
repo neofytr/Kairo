@@ -2,44 +2,41 @@
 
 #include "core/types.h"
 #include "graphics/window.h"
-#include "graphics/camera.h"
-#include "ecs/world.h"
+#include "scene/scene_manager.h"
 
 #include <string>
 
 namespace kairo {
 
-// user-facing base class
-// inherit from this to create a game / demo
+// user-facing base class for the game
+// can use scenes (via scene manager) or override update/render directly
 class Application {
 public:
     virtual ~Application() = default;
 
-    // override these in your game
     virtual void on_init() {}
     virtual void on_shutdown() {}
 
-    // called at fixed rate (physics, gameplay)
+    // direct update/render — used if you don't want scenes
     virtual void on_fixed_update(float dt) {}
-
-    // called every frame (variable dt — animation, input response)
     virtual void on_update(float dt) {}
-
-    // called every frame after update
     virtual void on_render() {}
 
-    // access engine systems
-    World& get_world() { return m_world; }
-    Camera& get_camera() { return m_camera; }
+    // scene management — push/switch scenes from your game code
+    SceneManager& get_scenes() { return m_scenes; }
     Window& get_window() { return *m_window; }
 
+    // if true, the engine delegates update/render to the scene manager
+    // instead of calling on_update/on_render directly
+    bool using_scenes() const { return m_use_scenes; }
+
 protected:
-    World m_world;
-    Camera m_camera;
+    SceneManager m_scenes;
+    bool m_use_scenes = false; // set to true in on_init if you want scene-based flow
 
 private:
     friend class Engine;
-    Window* m_window = nullptr; // set by Engine, not owned
+    Window* m_window = nullptr;
 };
 
 } // namespace kairo

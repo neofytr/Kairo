@@ -44,22 +44,39 @@ void Engine::run(Application& app) {
             break;
         }
 
+        // process deferred scene transitions
+        if (app.using_scenes()) {
+            app.get_scenes().process_pending();
+        }
+
         // fixed timestep updates (physics, gameplay logic)
         float fixed_dt = m_time.fixed_delta_time();
         while (m_time.accumulator() >= fixed_dt) {
-            app.on_fixed_update(fixed_dt);
+            if (app.using_scenes()) {
+                app.get_scenes().fixed_update(fixed_dt);
+            } else {
+                app.on_fixed_update(fixed_dt);
+            }
             m_time.consume_accumulator(fixed_dt);
         }
 
-        // variable update (animation, input-driven movement)
-        app.on_update(m_time.delta_time());
+        // variable update
+        if (app.using_scenes()) {
+            app.get_scenes().update(m_time.delta_time());
+        } else {
+            app.on_update(m_time.delta_time());
+        }
 
         // render
         glClearColor(0.08f, 0.08f, 0.10f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         Renderer::reset_stats();
-        app.on_render();
+        if (app.using_scenes()) {
+            app.get_scenes().render();
+        } else {
+            app.on_render();
+        }
 
         m_window.swap_buffers();
     }

@@ -18,6 +18,11 @@ public:
     World() = default;
     ~World() = default;
 
+    World(const World&) = delete;
+    World& operator=(const World&) = delete;
+    World(World&&) = default;
+    World& operator=(World&&) = default;
+
     Entity create();
     void destroy(Entity entity);
     bool is_alive(Entity entity) const;
@@ -40,6 +45,16 @@ public:
     void query(Func&& func);
 
     size_t entity_count() const;
+
+    // iterate over all living entities
+    template<typename Func>
+    void for_each_entity(Func&& func) const {
+        for (u32 i = 0; i < m_records.size(); i++) {
+            if (m_records[i].alive) {
+                func(Entity::make(i, m_records[i].generation));
+            }
+        }
+    }
 
 private:
     struct EntityRecord {

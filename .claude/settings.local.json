@@ -21,7 +21,9 @@
       "Bash(/tmp/glad-env/bin/cmake --version)",
       "Bash(/tmp/glad-env/bin/cmake -B build -DCMAKE_BUILD_TYPE=Debug)",
       "Bash(/tmp/glad-env/bin/cmake --build build)",
-      "Bash(curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image.h -o /home/raj/Desktop/Kairo/external/stb/stb_image.h)"
+      "Bash(curl -sL https://raw.githubusercontent.com/nothings/stb/master/stb_image.h -o /home/raj/Desktop/Kairo/external/stb/stb_image.h)",
+      "Bash(/tmp/glad-env/bin/cmake -B build)",
+      "Bash(curl -sL https://github.com/nlohmann/json/releases/download/v3.11.3/json.hpp -o /home/raj/Desktop/Kairo/external/nlohmann/json.hpp)"
     ]
   }
 }

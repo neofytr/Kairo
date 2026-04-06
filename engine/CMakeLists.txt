@@ -17,4 +17,5 @@ target_link_libraries(kairo_engine PUBLIC
     lua
     miniaudio
     OpenGL::GL
+    pthread
 )

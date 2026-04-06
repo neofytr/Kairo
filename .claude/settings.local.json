@@ -47,7 +47,8 @@
       "Bash(/tmp/glad-env/bin/cmake --build build --target kairo_engine)",
       "Bash(/tmp/glad-env/bin/cmake --build build --target kairo_tests)",
       "Bash(./kairo_tests)",
-      "Bash(./build/bin/kairo_tests)"
+      "Bash(./build/bin/kairo_tests)",
+      "Bash(find /home/raj/Desktop/Kairo/engine/editor/console_panel.* /home/raj/Desktop/Kairo/engine/editor/profiler_panel.* /home/raj/Desktop/Kairo/engine/editor/gizmo.* /home/raj/Desktop/Kairo/engine/editor/command.h /home/raj/Desktop/Kairo/engine/editor/asset_browser.* /home/raj/Desktop/Kairo/engine/scripting/script_hot_reload.* -type f)"
     ]
   }
 }

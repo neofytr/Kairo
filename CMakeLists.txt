@@ -8,7 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # output binaries to a clean location
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# --- dependencies ---
+# dependencies 
 
 # GLFW (system-installed)
 find_package(glfw3 3.3 REQUIRED)

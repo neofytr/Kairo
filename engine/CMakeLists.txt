@@ -13,5 +13,6 @@ target_link_libraries(kairo_engine PUBLIC
     glfw
     glad
     stb
+    imgui
     OpenGL::GL
 )

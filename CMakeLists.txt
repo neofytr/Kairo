@@ -23,6 +23,19 @@ target_include_directories(glad PUBLIC external/glad/include)
 add_library(stb STATIC external/stb/stb_image_impl.cpp)
 target_include_directories(stb PUBLIC external/stb)
 
+# ImGui (bundled)
+add_library(imgui STATIC
+    external/imgui/imgui.cpp
+    external/imgui/imgui_demo.cpp
+    external/imgui/imgui_draw.cpp
+    external/imgui/imgui_tables.cpp
+    external/imgui/imgui_widgets.cpp
+    external/imgui/imgui_impl_glfw.cpp
+    external/imgui/imgui_impl_opengl3.cpp
+)
+target_include_directories(imgui PUBLIC external/imgui)
+target_link_libraries(imgui PUBLIC glfw)
+
 # OpenGL
 find_package(OpenGL REQUIRED)
 

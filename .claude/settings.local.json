@@ -13,7 +13,14 @@
       "Bash(pip3 install:*)",
       "Bash(python3 -m venv /tmp/glad-env)",
       "Bash(/tmp/glad-env/bin/pip install:*)",
-      "Bash(/tmp/glad-env/bin/python -m glad --generator c --out-path . --profile core --api gl=4.6)"
+      "Bash(/tmp/glad-env/bin/python -m glad --generator c --out-path . --profile core --api gl=4.6)",
+      "Read(//usr/bin/**)",
+      "Read(//snap/bin/**)",
+      "Read(//home/raj/.local/bin/**)",
+      "Read(//usr/**)",
+      "Bash(/tmp/glad-env/bin/cmake --version)",
+      "Bash(/tmp/glad-env/bin/cmake -B build -DCMAKE_BUILD_TYPE=Debug)",
+      "Bash(/tmp/glad-env/bin/cmake --build build)"
     ]
   }
 }

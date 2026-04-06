@@ -1,0 +1,2 @@
+# mark external/vendored code so GitHub doesn't count it in language stats
+external/** linguist-vendored

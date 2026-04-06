@@ -1,11 +1,22 @@
+# build output
 build/
+build-*/
 cmake-build-*/
+
+# IDE
 .cache/
 .vscode/
-.claude
 .idea/
+
+# claude
+.claude/
+
+# compiled objects
 *.o
 *.a
 *.so
 *.dylib
+
+# cmake generated
 compile_commands.json
+CMakeUserPresets.json

@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Reference - Kairo Engine</title>
+  <meta name="description" content="Complete API reference for Kairo Engine — ECS, rendering, physics, audio, scripting, and more.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Top Navigation -->
+<nav class="topnav">
+  <a class="topnav-brand" href="index.html">
+    <span class="k-logo">K</span>
+    Kairo Engine
+  </a>
+  <ul class="topnav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="guide.html">Guide</a></li>
+    <li><a href="api.html" class="active">API Reference</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">&#9776;</button>
+</nav>
+
+<div class="sidebar-overlay"></div>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-search">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="search-input" placeholder="Search API..." autocomplete="off">
+    <span class="search-kbd">/</span>
+    <div class="search-results" id="search-results"></div>
+  </div>
+  <nav>
+    <div class="nav-group">
+      <div class="nav-group-title">Getting Started <span class="chevron">&#9662;</span></div>
+      <ul class="nav-items">
+        <li><a href="#quick-start">Quick Start</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Core <span class="chevron">&#9662;</span></div>
+      <ul class="nav-items">
+        <li><a href="#engine-core">Engine Core</a></li>
+        <li class="sub-item"><a href="#engine">Engine</a></li>
+        <li class="sub-item"><a href="#application">Application</a></li>
+        <li class="sub-item"><a href="#time">Time</a></li>
+        <li class="sub-item"><a href="#logging">Logging</a></li>
+        <li class="sub-item"><a href="#type-aliases">Type Aliases</a></li>
+        <li><a href="#ecs">ECS</a></li>
+        <li class="sub-item"><a href="#world">World</a></li>
+        <li class="sub-item"><a href="#system">System</a></li>
+        <li><a href="#math">Math</a></li>
+        <li class="sub-item"><a href="#vectors">Vectors</a></li>
+        <li class="sub-item"><a href="#mat4">Mat4</a></li>
+        <li class="sub-item"><a href="#math-utilities">Utilities</a></li>
+        <li><a href="#input">Input</a></li>
+        <li><a href="#events">Events</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Graphics <span class="chevron">&#9662;</span></div>
+      <ul class="nav-items">
+        <li><a href="#rendering">Rendering</a></li>
+        <li class="sub-item"><a href="#renderer">Renderer</a></li>
+        <li class="sub-item"><a href="#camera">Camera</a></li>
+        <li class="sub-item"><a href="#camera-controller">CameraController</a></li>
+        <li class="sub-item"><a href="#texture">Texture</a></li>
+        <li class="sub-item"><a href="#font">Font</a></li>
+        <li class="sub-item"><a href="#sprite-sheets">Sprite Sheets</a></li>
+        <li><a href="#lighting">Lighting</a></li>
+        <li><a href="#post-processing">Post-Processing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Simulation <span class="chevron">&#9662;</span></div>
+      <ul class="nav-items">
+        <li><a href="#physics">Physics</a></li>
+        <li class="sub-item"><a href="#colliders-layers">Colliders &amp; Layers</a></li>
+        <li class="sub-item"><a href="#rigidbody">RigidBody</a></li>
+        <li class="sub-item"><a href="#physics-world">PhysicsWorld</a></li>
+        <li class="sub-item"><a href="#raycasting">Raycasting</a></li>
+        <li class="sub-item"><a href="#joints">Joints</a></li>
+        <li><a href="#particles">Particles</a></li>
+        <li><a href="#audio">Audio</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Gameplay <span class="chevron">&#9662;</span></div>
+      <ul class="nav-items">
+        <li><a href="#scenes">Scenes</a></li>
+        <li class="sub-item"><a href="#scene-serialization">Serialization</a></li>
+        <li><a href="#tilemap">Tilemap</a></li>
+        <li><a href="#gameplay-systems">Gameplay Systems</a></li>
+        <li class="sub-item"><a href="#health">Health</a></li>
+        <li class="sub-item"><a href="#steering">Steering</a></li>
+        <li class="sub-item"><a href="#pathfinding">Pathfinding</a></li>
+        <li class="sub-item"><a href="#animation-sm">Animation SM</a></li>
+        <li class="sub-item"><a href="#timers-tweens">Timers &amp; Tweens</a></li>
+        <li class="sub-item"><a href="#wave-spawner">Wave Spawner</a></li>
+        <li class="sub-item"><a href="#entity-pool">Entity Pool</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Extensions <span class="chevron">&#9662;</span></div>
+      <ul class="nav-items">
+        <li><a href="#ecs-extensions">ECS Extensions</a></li>
+        <li class="sub-item"><a href="#hierarchy">Hierarchy</a></li>
+        <li class="sub-item"><a href="#tags">Tags</a></li>
+        <li class="sub-item"><a href="#prefabs">Prefabs</a></li>
+        <li><a href="#editor">Editor</a></li>
+        <li><a href="#scripting">Scripting</a></li>
+        <li><a href="#memory">Memory Allocators</a></li>
+        <li><a href="#advanced">Advanced</a></li>
+        <li class="sub-item"><a href="#simd">SIMD</a></li>
+        <li class="sub-item"><a href="#job-system">Job System</a></li>
+        <li class="sub-item"><a href="#frame-graph">Frame Graph</a></li>
+        <li class="sub-item"><a href="#networking">Networking</a></li>
+        <li class="sub-item"><a href="#shadows">Shadows</a></li>
+        <li class="sub-item"><a href="#debug-draw">Debug Draw</a></li>
+        <li class="sub-item"><a href="#shader-hot-reload">Shader Hot Reload</a></li>
+        <li class="sub-item"><a href="#screen-coords">Screen Coords</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Links <span class="chevron">&#9662;</span></div>
+      <ul class="nav-items">
+        <li><a href="guide.html">Getting Started</a></li>
+        <li><a href="index.html">Home</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+
+<div class="page-wrapper">
+  <main class="main-content">
+    <div class="content-body">
+
+      <h1>API Reference</h1>
+      <p class="section-desc">Complete API documentation for all Kairo Engine systems. Every function, struct, and code example from the engine.</p>
+
+      <!-- ============================================================ -->
+      <!-- 1. Quick Start -->
+      <!-- ============================================================ -->
+      <h2 id="quick-start">1. Quick Start <a href="#quick-start" class="anchor">#</a></h2>
+      <p>A complete, minimal Kairo game in a single file:</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">#include "core/engine.h"
+#include "core/application.h"
+#include "graphics/renderer.h"
+#include "graphics/camera.h"
+#include "ecs/world.h"
+
+struct Transform { kairo::Vec3 position; float rotation = 0.0f; };
+struct Sprite    { kairo::Vec4 color; kairo::Vec2 size; };
+
+class MyGame : public kairo::Application {
+    kairo::World m_world;
+    kairo::Camera m_camera;
+
+    void on_init() override {
+        m_camera.set_orthographic(1280.0f, 720.0f);
+        auto e = m_world.create();
+        m_world.add_component(e, Transform{{ 0, 0, 0 }});
+        m_world.add_component(e, Sprite{{ 1, 1, 1, 1 }, { 32, 32 }});
+    }
+    void on_update(float dt) override {
+        m_world.query&lt;Transform, Sprite&gt;([&amp;](kairo::Entity, Transform&amp; t, Sprite&amp;) {
+            t.position.x += 50.0f * dt;
+        });
+    }
+    void on_render() override {
+        kairo::Renderer::begin(m_camera);
+        m_world.query&lt;Transform, Sprite&gt;([](kairo::Entity, Transform&amp; t, Sprite&amp; s) {
+            kairo::Renderer::draw_quad(t.position, s.size, t.rotation, s.color);
+        });
+        kairo::Renderer::end();
+    }
+};
+
+int main() {
+    kairo::Engine engine;
+    if (!engine.init({ { "My Game", 1280, 720, true } })) return 1;
+    MyGame game;
+    engine.run(game);
+    engine.shutdown();
+}</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 2. Engine Core -->
+      <!-- ============================================================ -->
+      <h2 id="engine-core">2. Engine Core <a href="#engine-core" class="anchor">#</a></h2>
+
+      <h3 id="engine">Engine</h3>
+      <p><code>Engine::init(EngineConfig)</code> creates the window and renderer. <code>Engine::run(Application&amp;)</code> blocks until the window closes. <code>Engine::shutdown()</code> tears everything down.</p>
+      <p><code>EngineConfig</code> wraps a <code>WindowConfig { string title, i32 width, i32 height, bool vsync }</code>.</p>
+
+      <h3 id="application">Application</h3>
+      <p>Override these lifecycle methods:</p>
+      <ul>
+        <li><code>on_init()</code> / <code>on_shutdown()</code> &mdash; startup and teardown</li>
+        <li><code>on_fixed_update(float dt)</code> &mdash; fixed timestep (60 Hz default), use for physics</li>
+        <li><code>on_update(float dt)</code> &mdash; variable timestep, gameplay and rendering logic</li>
+        <li><code>on_render()</code> &mdash; draw everything</li>
+        <li><code>on_editor_ui(fps, dt, stats)</code> &mdash; ImGui panels when editor is visible</li>
+      </ul>
+      <p>Accessors: <code>get_window()</code>, <code>get_scenes()</code>. Set <code>m_use_scenes = true</code> to enable scene management.</p>
+
+      <h3 id="time">Time</h3>
+      <p>Managed by Engine. <code>delta_time()</code> is variable frame time, <code>fixed_delta_time()</code> defaults to 1/60s, <code>elapsed()</code> is total time, <code>fps()</code> is smoothed framerate.</p>
+
+      <h3 id="logging">Logging</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">kairo::log::info("wave %d started", wave_number);
+kairo::log::warn("low hp: %.1f", hp);
+kairo::log::error("file not found: %s", path);
+kairo::log::min_level = kairo::log::Level::Warn; // suppress trace/info</code></pre>
+      </div>
+
+      <h3 id="type-aliases">Type Aliases (<code>core/types.h</code>)</h3>
+      <p><code>u8</code>..<code>u64</code>, <code>i8</code>..<code>i64</code>, <code>f32</code>, <code>f64</code>, <code>Unique&lt;T&gt;</code> (<code>unique_ptr</code>), <code>Shared&lt;T&gt;</code> (<code>shared_ptr</code>).</p>
+
+      <!-- ============================================================ -->
+      <!-- 3. ECS -->
+      <!-- ============================================================ -->
+      <h2 id="ecs">3. ECS <a href="#ecs" class="anchor">#</a></h2>
+      <p>Archetype-based. Entities are 64-bit handles (32 index + 32 generation). Components are plain structs.</p>
+
+      <h3 id="world">World</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">kairo::World world;
+Entity e = world.create();
+world.destroy(e);
+bool alive = world.is_alive(e);
+
+world.add_component(e, MyComp{ 42 });
+auto&amp; c = world.get_component&lt;MyComp&gt;(e);
+bool has = world.has_component&lt;MyComp&gt;(e);
+world.remove_component&lt;MyComp&gt;(e);
+
+// query: iterate all entities matching component types
+world.query&lt;Transform, Sprite&gt;([](Entity e, Transform&amp; t, Sprite&amp; s) { ... });
+
+// iterate all living entities (no filter)
+world.for_each_entity([](Entity e) { ... });</code></pre>
+      </div>
+
+      <div class="callout warn">
+        <strong>Gotcha:</strong> Never destroy entities inside a <code>query</code> callback. Collect into a vector and destroy after:
+      </div>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">std::vector&lt;Entity&gt; dead;
+world.query&lt;BulletTag&gt;([&amp;](Entity e, BulletTag&amp; b) {
+    if (b.lifetime &lt;= 0) dead.push_back(e);
+});
+for (auto e : dead) if (world.is_alive(e)) world.destroy(e);</code></pre>
+      </div>
+
+      <h3 id="system">System</h3>
+      <p>Optional base class: override <code>init(World&amp;)</code>, <code>update(World&amp;, float dt)</code>, <code>render(World&amp;)</code>.</p>
+
+      <!-- ============================================================ -->
+      <!-- 4. Math -->
+      <!-- ============================================================ -->
+      <h2 id="math">4. Math <a href="#math" class="anchor">#</a></h2>
+
+      <h3 id="vectors">Vectors</h3>
+      <p><code>Vec2</code>, <code>Vec3</code>, <code>Vec4</code> with standard operators (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, <code>+=</code>, <code>-=</code>, <code>*=</code>, unary <code>-</code>).</p>
+      <p>Key methods: <code>length()</code>, <code>length_sq()</code>, <code>normalized()</code>, <code>dot()</code>. Vec2 adds <code>perp()</code> (90-deg CCW). Vec3 adds <code>cross()</code>. Vec4 constructs from <code>Vec3 + w</code>.</p>
+
+      <h3 id="mat4">Mat4</h3>
+      <p>Column-major 4x4. Static factories:</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Mat4::identity()
+Mat4::translate(Vec3), Mat4::scale(Vec3), Mat4::rotate_z(radians)
+Mat4::rotate(radians, axis)
+Mat4::ortho(left, right, bottom, top, near, far)
+Mat4::perspective(fov_rad, aspect, near, far)
+Mat4::look_at(eye, target, up)</code></pre>
+      </div>
+      <p><code>data()</code> returns <code>const float*</code> for OpenGL uniforms.</p>
+
+      <h3 id="math-utilities">Utilities (<code>math_utils.h</code>)</h3>
+      <p><code>radians()</code>, <code>degrees()</code>, <code>clamp()</code>, <code>lerp()</code>, <code>smoothstep()</code>, <code>approx_equal()</code>. Constants: <code>PI</code>, <code>TAU</code>, <code>DEG_TO_RAD</code>, <code>RAD_TO_DEG</code>.</p>
+
+      <!-- ============================================================ -->
+      <!-- 5. Rendering -->
+      <!-- ============================================================ -->
+      <h2 id="rendering">5. Rendering <a href="#rendering" class="anchor">#</a></h2>
+
+      <h3 id="renderer">Renderer</h3>
+      <p>Static batch renderer. Draw calls between <code>begin</code>/<code>end</code> are sorted by layer and flushed.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Renderer::begin(camera);
+Renderer::set_layer(RenderLayer::Background); // 0, Default=100, Foreground=200, UI=300
+Renderer::set_layer(42);                      // or custom int
+
+// colored quads
+Renderer::draw_quad(Vec3 pos, Vec2 size, Vec4 color);
+Renderer::draw_quad(Vec3 pos, Vec2 size, float rotation, Vec4 color);
+
+// textured quads
+Renderer::draw_quad(Vec3 pos, Vec2 size, Texture&amp; tex, Vec4 tint = white);
+Renderer::draw_quad(Vec3 pos, Vec2 size, float rotation, Texture&amp; tex, Vec2 uv_min, Vec2 uv_max, Vec4 tint);
+
+// text
+Renderer::draw_text("Score 100", Vec2{10, 20}, 2.0f, Vec4{1,1,1,1});
+Renderer::draw_text(custom_font, "text", pos, scale, color);
+
+Renderer::end();
+auto stats = Renderer::get_stats(); // .draw_calls, .quad_count</code></pre>
+      </div>
+      <div class="callout warn">
+        <strong>Gotcha:</strong> For multiple passes (scene + HUD), use separate <code>begin</code>/<code>end</code> pairs with different cameras. The sandbox does this: scene camera for gameplay, then a fixed HUD camera.
+      </div>
+
+      <h3 id="camera">Camera</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Camera cam;
+cam.set_orthographic(1280.0f, 720.0f);            // 2D
+cam.set_perspective(fov_degrees, aspect, 0.1f, 100.0f); // 3D
+cam.set_position(Vec3{100, 200, 0});
+cam.set_rotation(z_radians);</code></pre>
+      </div>
+
+      <h3 id="camera-controller">CameraController</h3>
+      <p>Smooth-follow with dead zone, zoom, and trauma-based screen shake.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">CameraController ctrl;
+ctrl.set_camera(&amp;camera);
+ctrl.set_smoothing(10.0f);
+ctrl.set_dead_zone({20, 20});
+ctrl.set_zoom(1.0f);          // 0.5 = 2x zoom in
+ctrl.add_trauma(0.5f);        // shake, 0-1, decays automatically
+ctrl.set_shake_intensity(10.0f, 0.03f);
+ctrl.set_target(player_pos);
+ctrl.update(dt);</code></pre>
+      </div>
+
+      <h3 id="texture">Texture</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Texture tex;
+tex.load("assets/player.png"); // Nearest filter, ClampToEdge, flip_y by default
+tex.load("assets/bg.png", { TextureFilter::Linear, TextureWrap::Repeat, true });</code></pre>
+      </div>
+      <p>Non-copyable, move-only. <code>get_width()</code>, <code>get_height()</code>, <code>get_id()</code>.</p>
+
+      <h3 id="font">Font</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Font font;
+font.load_bmfont("assets/fonts/my.fnt");
+float w = font.measure_width("hello", 2.0f);
+Font&amp; builtin = Renderer::get_default_font();</code></pre>
+      </div>
+
+      <h3 id="sprite-sheets">Sprite Sheets</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">SpriteSheet sheet;
+sheet.load(texture, 16, 16); // cell width/height in pixels
+SpriteRegion r = sheet.get_region(col, row); // or get_region(flat_index)
+
+SpriteAnimation anim;
+anim.start_frame = 0; anim.frame_count = 8; anim.frame_duration = 0.1f;
+anim.update(dt);
+auto region = sheet.get_region(anim.get_sheet_index());</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 6. Input -->
+      <!-- ============================================================ -->
+      <h2 id="input">6. Input <a href="#input" class="anchor">#</a></h2>
+      <p>Static polling. Call <code>is_key_pressed</code> for single-frame detection, <code>is_key_held</code> for continuous.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Input::is_key_pressed(Key::Space);   // true on press frame only
+Input::is_key_held(Key::W);          // true while held
+Input::is_key_released(Key::Escape);
+
+Input::is_mouse_pressed(MouseButton::Left);
+Input::get_mouse_position();  // Vec2
+Input::get_mouse_delta();     // Vec2
+Input::get_scroll_delta();    // float</code></pre>
+      </div>
+      <p>Key codes: <code>W/A/S/D</code>, <code>Space</code>, <code>Escape</code>, <code>Enter</code>, <code>Up/Down/Left/Right</code>, <code>F1</code>-<code>F12</code>, <code>LeftShift</code>, <code>LeftCtrl</code>.</p>
+
+      <!-- ============================================================ -->
+      <!-- 7. Physics -->
+      <!-- ============================================================ -->
+      <h2 id="physics">7. Physics <a href="#physics" class="anchor">#</a></h2>
+
+      <h3 id="colliders-layers">Colliders and Layers</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">ColliderComponent col;
+col.shape = ColliderComponent::Shape::Circle; // or AABB
+col.radius = 14.0f;                           // circle
+col.half_size = {16, 16};                     // AABB half-extents
+col.offset = {0, 0};
+col.is_trigger = false;                       // triggers detect but don't resolve
+
+// bitmask layers: only collide if (a.layer &amp; b.mask) &amp;&amp; (b.layer &amp; a.mask)
+col.layer = CollisionLayer::Player;
+col.mask  = CollisionLayer::Enemy | CollisionLayer::Wall;</code></pre>
+      </div>
+      <p>Built-in layers: <code>None</code>, <code>Default</code>, <code>Player</code>, <code>Enemy</code>, <code>Bullet</code>, <code>Wall</code>, <code>Pickup</code>, <code>All</code>.</p>
+
+      <h3 id="rigidbody">RigidBody</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">RigidBodyComponent rb;
+rb.set_mass(3.0f);       // auto-computes inv_mass
+rb.restitution = 0.3f;   // bounciness 0-1
+rb.make_static();         // infinite mass, won't move
+rb.apply_force(Vec2{0, -980});</code></pre>
+      </div>
+
+      <h3 id="physics-world">PhysicsWorld</h3>
+      <p>You collect bodies from ECS, pass to <code>step</code>, then write positions back:</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">PhysicsWorld physics;
+physics.set_gravity({0, 0});
+
+// in on_fixed_update:
+std::vector&lt;PhysicsBody&gt; bodies;
+world.query&lt;Transform, ColliderComponent&gt;([&amp;](Entity e, Transform&amp; t, ColliderComponent&amp; col) {
+    PhysicsBody b;
+    b.entity = e; b.position = {t.position.x, t.position.y}; b.collider = col;
+    if (world.has_component&lt;RigidBodyComponent&gt;(e))
+        b.rigidbody = &amp;world.get_component&lt;RigidBodyComponent&gt;(e);
+    bodies.push_back(b);
+});
+physics.step(bodies, dt);
+
+for (auto&amp; b : bodies) {
+    auto&amp; t = world.get_component&lt;Transform&gt;(b.entity);
+    t.position.x = b.position.x;
+    t.position.y = b.position.y;
+}
+for (auto&amp; c : physics.get_collisions()) { /* c.a, c.b, c.manifold */ }</code></pre>
+      </div>
+
+      <h3 id="raycasting">Raycasting</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Ray2D ray{ origin, direction.normalized() };
+auto hit = ray_vs_aabb(ray, box);
+auto hit = ray_vs_circle(ray, center, radius);
+auto hit = raycast(ray, targets_vec, max_dist); // closest hit from RayTarget list
+if (hit) { hit-&gt;point; hit-&gt;normal; hit-&gt;distance; hit-&gt;entity; }</code></pre>
+      </div>
+
+      <h3 id="joints">Joints</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">JointSystem joints;
+joints.add_distance_joint(a, b, rest_length);
+joints.add_spring_joint(a, b, rest_length, stiffness, damping);
+joints.solve(body_states, dt); // call during physics step</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 8. Particles -->
+      <!-- ============================================================ -->
+      <h2 id="particles">8. Particles <a href="#particles" class="anchor">#</a></h2>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">ParticleEmitterConfig config;
+config.max_particles = 600;
+config.emit_rate = 80.0f;               // per second; 0 for burst-only
+config.lifetime = {0.15f, 0.5f};        // Range&lt;float&gt;: random between min/max
+config.velocity = {{-50,-50}, {50,50}};
+config.start_size = {2.0f, 4.0f};
+config.end_size = {0.0f, 0.5f};
+config.start_color = {{1,1,1,1}, {1,1,0.5f,1}};
+config.end_color = {{1,0,0,0}, {1,0.3f,0,0}};
+config.damping = 4.0f;
+config.looping = true;
+
+ParticleEmitter emitter(config);
+emitter.set_position(pos);
+emitter.burst(12);    // instant burst
+emitter.start();      // begin continuous
+emitter.stop();
+emitter.update(dt);
+emitter.render(camera);</code></pre>
+      </div>
+      <p>For one-shot effects (hit sparks, explosions): set <code>emit_rate = 0</code>, <code>looping = false</code>, then call <code>burst(count)</code> on impact.</p>
+
+      <!-- ============================================================ -->
+      <!-- 9. Lighting -->
+      <!-- ============================================================ -->
+      <h2 id="lighting">9. Lighting <a href="#lighting" class="anchor">#</a></h2>
+      <p>2D point light system. Renders a fullscreen pass multiplied over the scene.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">LightSystem lights;
+lights.init();
+lights.set_ambient({0.08f, 0.06f, 0.12f}, 0.15f);
+
+// each frame:
+lights.clear_lights();
+lights.add_light({ position, color, intensity, radius }); // up to 32
+lights.render(camera); // after Renderer::end(), before post-processing output
+lights.shutdown();</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 10. Post-Processing -->
+      <!-- ============================================================ -->
+      <h2 id="post-processing">10. Post-Processing <a href="#post-processing" class="anchor">#</a></h2>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">PostProcessStack post;
+post.init(1280, 720);
+auto bloom = std::make_unique&lt;BloomEffect&gt;();
+bloom-&gt;set_threshold(0.5f); bloom-&gt;set_intensity(0.35f);
+post.add_effect(std::move(bloom));
+auto vig = std::make_unique&lt;VignetteEffect&gt;();
+vig-&gt;set_intensity(0.6f); vig-&gt;set_softness(0.55f);
+post.add_effect(std::move(vig));
+
+// in on_render:
+post.begin_capture();       // redirect rendering to FBO
+Renderer::begin(camera); /* draw scene */ Renderer::end();
+lights.render(camera);
+post.end_and_apply();       // run effect chain, blit to screen
+// HUD goes after this with a separate begin/end pass</code></pre>
+      </div>
+      <p>Custom effects: subclass <code>PostProcessEffect</code>, implement <code>init</code>, <code>shutdown</code>, <code>apply(u32 input_tex, Framebuffer&amp; output)</code>.</p>
+
+      <!-- ============================================================ -->
+      <!-- 11. Audio -->
+      <!-- ============================================================ -->
+      <h2 id="audio">11. Audio <a href="#audio" class="anchor">#</a></h2>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">AudioSystem audio;
+audio.init();
+audio.set_master_volume(0.6f);
+
+SoundHandle h = audio.play("assets/sounds/shoot.wav", 0.25f, false);
+SoundHandle h = audio.play_at("assets/sounds/hit.wav", world_pos, 0.5f, 500.0f); // spatial
+
+audio.stop(h); audio.set_volume(h, 0.8f); audio.set_looping(h, true); audio.stop_all();
+audio.set_listener_position(player_pos);
+audio.update(); // call each frame, cleans up finished sounds
+audio.shutdown();</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 12. Scenes -->
+      <!-- ============================================================ -->
+      <h2 id="scenes">12. Scenes <a href="#scenes" class="anchor">#</a></h2>
+      <p><code>Scene</code> owns a <code>World</code> and <code>Camera</code>. Override: <code>on_enter</code>, <code>on_exit</code>, <code>on_pause</code>, <code>on_resume</code>, <code>on_fixed_update</code>, <code>on_update</code>, <code>on_render</code>.</p>
+      <p><code>SceneManager</code> is a stack:</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">scenes.push(std::make_unique&lt;PauseScene&gt;(scenes));   // overlay, pauses current
+scenes.pop();                                         // resume previous
+scenes.switch_to(std::make_unique&lt;GameplayScene&gt;()); // replace entire stack</code></pre>
+      </div>
+      <p>Transitions are deferred &mdash; applied on next <code>process_pending()</code>. Enable in Application: <code>m_use_scenes = true</code>.</p>
+
+      <h3 id="scene-serialization">Scene Serialization</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">SceneSerializer ser;
+ser.register_component&lt;Transform&gt;("transform", to_json_fn, from_json_fn);
+ser.save(world, "level.json");
+ser.load(world, "level.json");</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 13. Tilemap -->
+      <!-- ============================================================ -->
+      <h2 id="tilemap">13. Tilemap <a href="#tilemap" class="anchor">#</a></h2>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Tilemap tilemap;
+tilemap.init(10, 10, 80.0f); // grid width, height, world-space tile size
+tilemap.set_tileset(&amp;texture, {16, 16}); // pixel cell size
+tilemap.set_tile(x, y, tile_id);
+tilemap.set_tile(x, y, tile_id, tint);
+tilemap.fill(tile_id); tilemap.clear();
+
+tilemap.set_solid_tiles({0, 1, 5});
+bool blocked = tilemap.is_solid(x, y);
+Vec2 wp = tilemap.tile_to_world(x, y);
+tilemap.world_to_tile(world_pos, tx, ty);
+
+tilemap.render(camera_pos, view_size);         // textured
+tilemap.render_colored(camera_pos, view_size); // colored quads (debug)</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 14. Gameplay Systems -->
+      <!-- ============================================================ -->
+      <h2 id="gameplay-systems">14. Gameplay Systems <a href="#gameplay-systems" class="anchor">#</a></h2>
+
+      <h3 id="health">Health and Invincibility</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">HealthComponent hp{100.0f, 100.0f};
+hp.damage(25); hp.heal(10); hp.is_alive(); hp.ratio(); // 0-1
+
+InvincibilityComponent inv;
+inv.duration = 1.0f;
+inv.activate(); inv.update(dt); inv.is_active();</code></pre>
+      </div>
+
+      <h3 id="steering">Steering Behaviors</h3>
+      <p>Return force vectors. Apply to velocity manually.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">SteeringAgent agent{position, velocity, max_speed, max_force};
+Vec2 f = steering::seek(agent, target);
+Vec2 f = steering::flee(agent, threat);
+Vec2 f = steering::arrive(agent, target, slow_radius);
+Vec2 f = steering::pursue(agent, target_pos, target_vel);
+Vec2 f = steering::wander(agent, wander_angle);
+Vec2 f = steering::separation(agent, neighbors, desired_dist);
+Vec2 f = steering::cohesion(agent, neighbors);
+Vec2 f = steering::alignment(agent, neighbor_vels);
+f = steering::truncate(f, max_force);</code></pre>
+      </div>
+
+      <h3 id="pathfinding">Pathfinding</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">NavGrid nav(50, 50, 32.0f);
+nav.set_walkable(5, 3, false);
+std::vector&lt;Vec2&gt; path = nav.find_path(start, end); // A*, world-space waypoints</code></pre>
+      </div>
+
+      <h3 id="animation-sm">Animation State Machine</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">AnimationStateMachine anim;
+anim.add_state(AnimationClip{"idle", {0,1,2,3}, 0.15f, true});
+anim.add_state(AnimationClip{"run", {4,5,6,7}, 0.1f, true});
+anim.add_transition("idle", "run", [&amp;]{ return speed &gt; 0.1f; });
+anim.set_state("idle");
+anim.update(dt);
+i32 frame = anim.get_current_frame();</code></pre>
+      </div>
+
+      <h3 id="timers-tweens">Timers and Tweens</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">TimerManager timers;
+timers.after(2.0f, []{ /* once */ });
+timers.every(10.0f, []{ /* repeating */ });
+timers.update(dt);
+
+TweenManager tweens;
+tweens.tween(&amp;value, target, duration, ease::out_elastic, on_complete);
+tweens.update(dt);</code></pre>
+      </div>
+      <p>Easing functions: <code>ease::linear</code>, <code>in_quad</code>, <code>out_quad</code>, <code>in_out_quad</code>, <code>in_cubic</code>, <code>out_cubic</code>, <code>in_out_cubic</code>, <code>in_elastic</code>, <code>out_elastic</code>, <code>out_bounce</code>.</p>
+
+      <h3 id="wave-spawner">Wave Spawner</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">WaveSpawner spawner;
+spawner.generate_waves(100, 4, 2, {"chaser","tank","swarmer"}, 8.0f);
+spawner.set_spawn_callback([](const std::string&amp; type, i32 index) { /* spawn */ });
+spawner.start();
+spawner.update(dt);</code></pre>
+      </div>
+
+      <h3 id="entity-pool">Entity Pool</h3>
+      <p>Reuses entities to avoid create/destroy churn.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">EntityPool pool;
+pool.init(world, 50, [](World&amp; w, Entity e) {
+    w.add_component(e, BulletComponent{});
+});
+Entity e = pool.acquire();
+pool.release(e);</code></pre>
+      </div>
+      <p>Inactive entities have <code>PooledInactive</code> tag &mdash; check and skip in queries.</p>
+
+      <!-- ============================================================ -->
+      <!-- 15. Events -->
+      <!-- ============================================================ -->
+      <h2 id="events">15. Events <a href="#events" class="anchor">#</a></h2>
+      <p>Type-safe publish/subscribe.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">struct DamageEvent { u64 target; float amount; };
+
+EventBus bus;
+u32 sub = bus.subscribe&lt;DamageEvent&gt;([](const DamageEvent&amp; e) { /* handle */ });
+bus.publish(DamageEvent{entity.id, 25.0f});
+
+bus.queue(event);  // deferred
+bus.flush();       // process queued
+bus.unsubscribe(sub);</code></pre>
+      </div>
+      <p>Built-in events: <code>CollisionEvent</code>, <code>EntityDestroyedEvent</code>, <code>SceneChangedEvent</code>, <code>WindowResizedEvent</code>.</p>
+
+      <!-- ============================================================ -->
+      <!-- 16. ECS Extensions -->
+      <!-- ============================================================ -->
+      <h2 id="ecs-extensions">16. ECS Extensions <a href="#ecs-extensions" class="anchor">#</a></h2>
+
+      <h3 id="hierarchy">Hierarchy</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">HierarchySystem hier;
+hier.attach(world, child, parent);
+hier.detach(world, child);
+Entity p = hier.get_parent(world, entity);
+const auto&amp; children = hier.get_children(world, entity);</code></pre>
+      </div>
+      <p>Child transforms are not automatic. Use <code>get_parent</code> to read parent position and offset manually.</p>
+
+      <h3 id="tags">Tags</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">TagSystem tags;
+tags.tag(world, entity, "enemy");
+tags.untag(world, entity, "enemy");
+bool b = tags.has_tag(world, entity, "enemy");
+auto enemies = tags.find_by_tag(world, "enemy");
+Entity p = tags.find_first(world, "player");</code></pre>
+      </div>
+
+      <h3 id="prefabs">Prefabs</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">PrefabRegistry prefabs;
+prefabs.register_component&lt;Transform&gt;("transform", to_json, from_json, has_check);
+prefabs.save_prefab(world, entity, "enemy.json");
+Entity e = prefabs.instantiate_from_file(world, "enemy.json");
+prefabs.store("bullet", json_data);
+Entity e = prefabs.instantiate_by_name(world, "bullet");</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 17. Editor -->
+      <!-- ============================================================ -->
+      <h2 id="editor">17. Editor <a href="#editor" class="anchor">#</a></h2>
+      <p>Toggle with F1. Built on Dear ImGui.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">// in on_editor_ui:
+StatsPanel stats;     stats.draw(fps, dt, render_stats, entity_count);
+HierarchyPanel hier;  hier.draw(world); Entity sel = hier.get_selected();
+InspectorPanel insp;  insp.draw(world, selected_entity);
+ProfilerPanel prof;   prof.draw(fps, dt);
+ConsolePanel console; console.draw(&amp;script_engine);</code></pre>
+      </div>
+      <p><strong>InspectorPanel</strong>: register component editors via <code>register_component(name, draw_func)</code>.</p>
+      <p><strong>Profiler</strong>: use <code>KAIRO_PROFILE_SCOPE("name")</code> in code, results appear in the panel.</p>
+      <p><strong>Gizmo</strong>: <code>gizmo.update(entity_pos, mouse_world, mouse_down, just_pressed, delta_out)</code> returns true while dragging. Modes: <code>Translate</code>, <code>Rotate</code>, <code>Scale</code>.</p>
+      <p><strong>Undo/Redo</strong>: <code>CommandHistory</code> with <code>execute(unique_ptr&lt;Command&gt;)</code>, <code>undo()</code>, <code>redo()</code>. Use <code>LambdaCommand</code> for quick inline commands.</p>
+      <p><strong>Asset Browser</strong>: <code>AssetBrowser::set_root("assets")</code>, <code>draw()</code>, <code>get_selected()</code>.</p>
+
+      <!-- ============================================================ -->
+      <!-- 18. Scripting -->
+      <!-- ============================================================ -->
+      <h2 id="scripting">18. Scripting (Lua) <a href="#scripting" class="anchor">#</a></h2>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">ScriptEngine scripts;
+scripts.init();
+scripts.set_world(&amp;world);
+scripts.load_file("assets/scripts/ai.lua");
+scripts.execute("print('hello')");
+scripts.call("on_start");
+scripts.call_update(entity.id, dt);</code></pre>
+      </div>
+      <p>Attach to entities: <code>world.add_component(e, ScriptComponent{"assets/scripts/ai.lua"})</code>.</p>
+      <p>Hot reload: <code>ScriptHotReload::watch(path, &amp;engine)</code>, call <code>check()</code> each frame.</p>
+
+      <!-- ============================================================ -->
+      <!-- 19. Memory Allocators -->
+      <!-- ============================================================ -->
+      <h2 id="memory">19. Memory Allocators <a href="#memory" class="anchor">#</a></h2>
+
+      <h3 id="pool-allocator">PoolAllocator&lt;T&gt;</h3>
+      <p>Fixed-size, O(1) alloc/free, auto-grows in chunks:</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">PoolAllocator&lt;Particle&gt; pool(1024);
+Particle* p = pool.allocate(args...);
+pool.deallocate(p);</code></pre>
+      </div>
+
+      <h3 id="linear-allocator">LinearAllocator</h3>
+      <p>Bump allocator, no individual free, <code>reset()</code> frees all. Ideal for per-frame scratch:</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">LinearAllocator alloc(64 * 1024);
+auto* obj = alloc.create&lt;MyStruct&gt;(args...);
+alloc.reset(); // free everything</code></pre>
+      </div>
+
+      <h3 id="stack-allocator">StackAllocator</h3>
+      <p>LIFO with markers:</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">StackAllocator stack(32 * 1024);
+auto mark = stack.get_marker();
+auto* a = stack.create&lt;Foo&gt;();
+stack.free_to_marker(mark); // frees a</code></pre>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- 20. Advanced -->
+      <!-- ============================================================ -->
+      <h2 id="advanced">20. Advanced <a href="#advanced" class="anchor">#</a></h2>
+
+      <h3 id="simd">SIMD (<code>math/simd.h</code>)</h3>
+      <p>SSE-accelerated with scalar fallbacks: <code>simd::add</code>, <code>simd::mul</code>, <code>simd::dot</code>, <code>simd::mat4_multiply</code>, <code>simd::mat4_transform</code>, <code>simd::mat4_transform_batch</code>.</p>
+
+      <h3 id="job-system">Job System</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">JobSystem jobs;
+jobs.init(0); // 0 = hardware_concurrency - 1
+auto future = jobs.submit([]{ /* work */ });
+jobs.parallel_for(1000, [](u32 i) { /* per-index */ });
+jobs.wait_idle();
+jobs.shutdown();</code></pre>
+      </div>
+
+      <h3 id="frame-graph">Frame Graph</h3>
+      <p>Declare render passes with dependencies. Manages FBOs and execution order.</p>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">FrameGraph graph;
+graph.add_pass({"scene", {}, "scene_color", execute_fn, {1280,720,false}});
+graph.add_pass({"blur", {"scene_color"}, "blur_out", execute_fn});
+graph.add_screen_pass("final", {"blur_out"}, execute_fn);
+graph.compile(); graph.execute();</code></pre>
+      </div>
+
+      <h3 id="networking">Networking</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">UDPSocket sock;
+sock.bind(7777);
+sock.send("127.0.0.1", 7778, data, size);
+Packet pkt; if (sock.receive(pkt)) { /* pkt.data, pkt.sender_address */ }
+
+NetEntityState state{id, pos, vel, rot};
+serialize_state(state, bytes); deserialize_state(data, size, out);</code></pre>
+      </div>
+
+      <h3 id="shadows">Shadows</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">ShadowSystem shadows;
+shadows.init();
+shadows.add_caster({aabb});
+shadows.render_shadows(light_pos, light_radius, camera, alpha);</code></pre>
+      </div>
+
+      <h3 id="debug-draw">Debug Draw</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">DebugDraw::set_enabled(true);
+DebugDraw::line(a, b, color); DebugDraw::rect(center, size, color);
+DebugDraw::circle(center, radius, color, segments);
+DebugDraw::arrow(from, to, color);
+DebugDraw::render(camera); // after scene, before HUD</code></pre>
+      </div>
+
+      <h3 id="shader-hot-reload">Shader Hot Reload</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">ShaderWatcher watcher;
+watcher.watch(&amp;shader, "vert.glsl", "frag.glsl");
+watcher.check(); // each frame</code></pre>
+      </div>
+
+      <h3 id="screen-coords">Screen Coordinate Conversion</h3>
+      <div class="code-card">
+        <span class="code-lang">C++</span>
+        <button class="copy-btn">Copy</button>
+        <pre><code class="language-cpp">Vec2 world = screen_to_world(screen_pos, camera_pos, ortho_half, width, height);
+Vec2 screen = world_to_screen(world_pos, camera_pos, ortho_half, width, height);</code></pre>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- On This Page (right rail) -->
+  <div class="toc-rail" id="toc-rail">
+    <div class="toc-rail-title">On this page</div>
+    <!-- Populated by JS based on current visible section -->
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="search.js"></script>
+<script>
+// Dynamic TOC rail: show h3 headings for the currently visible h2 section
+(function () {
+  var rail = document.getElementById('toc-rail');
+  if (!rail) return;
+  var h2s = document.querySelectorAll('.content-body h2[id]');
+  var h3s = document.querySelectorAll('.content-body h3[id]');
+
+  function buildToc(activeH2Id) {
+    // Find h3s between this h2 and the next h2
+    var start = document.getElementById(activeH2Id);
+    if (!start) return;
+    var items = [];
+    var node = start.nextElementSibling;
+    while (node) {
+      if (node.tagName === 'H2') break;
+      if (node.tagName === 'H3' && node.id) {
+        items.push({ id: node.id, text: node.textContent.replace(/#/g, '').trim() });
+      }
+      node = node.nextElementSibling;
+    }
+    var html = '<div class="toc-rail-title">On this page</div>';
+    items.forEach(function (item) {
+      html += '<a href="#' + item.id + '">' + item.text + '</a>';
+    });
+    rail.innerHTML = html;
+  }
+
+  var currentH2 = null;
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting && entry.target.tagName === 'H2') {
+        if (currentH2 !== entry.target.id) {
+          currentH2 = entry.target.id;
+          buildToc(currentH2);
+        }
+      }
+    });
+  }, { rootMargin: '-60px 0px -70% 0px', threshold: 0 });
+
+  h2s.forEach(function (h) { observer.observe(h); });
+
+  // Also track h3 for active state in toc rail
+  var h3Observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        rail.querySelectorAll('a').forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+        });
+      }
+    });
+  }, { rootMargin: '-80px 0px -60% 0px', threshold: 0 });
+
+  h3s.forEach(function (h) { h3Observer.observe(h); });
+
+  // Initial build
+  if (h2s.length) buildToc(h2s[0].id);
+})();
+</script>
+</body>
+</html>

@@ -71,6 +71,7 @@ private:
     struct ComponentMeta {
         size_t size;
         size_t alignment;
+        DestroyFunc destroy;
     };
     std::unordered_map<ComponentTypeId, ComponentMeta> m_component_meta;
 
@@ -89,7 +90,12 @@ template<typename T>
 void World::ensure_component_registered() {
     auto id = get_component_id<T>();
     if (m_component_meta.find(id) == m_component_meta.end()) {
-        m_component_meta[id] = { sizeof(T), alignof(T) };
+        // only store a destructor for non-trivially-destructible types
+        DestroyFunc destroy = nullptr;
+        if constexpr (!std::is_trivially_destructible_v<T>) {
+            destroy = [](void* ptr) { static_cast<T*>(ptr)->~T(); };
+        }
+        m_component_meta[id] = { sizeof(T), alignof(T), destroy };
     }
 }
 

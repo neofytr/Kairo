@@ -4,9 +4,10 @@ namespace kairo {
 
 Archetype::Archetype(const ComponentSignature& sig) : m_signature(sig) {}
 
-void Archetype::add_column(ComponentTypeId type_id, size_t element_size, size_t alignment) {
+void Archetype::add_column(ComponentTypeId type_id, size_t element_size, size_t alignment,
+                           DestroyFunc destroy) {
     size_t col_index = m_columns.size();
-    m_columns.emplace_back(element_size, alignment);
+    m_columns.emplace_back(element_size, alignment, destroy);
     m_column_map[type_id] = col_index;
 }
 

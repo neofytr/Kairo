@@ -13,20 +13,30 @@ namespace kairo {
 
 // type-erased column of component data
 // stores a contiguous array of one component type
+// destructor function for type-erased component cleanup
+using DestroyFunc = void(*)(void*);
+
 class ComponentColumn {
 public:
     ComponentColumn() = default;
-    ComponentColumn(size_t element_size, size_t alignment)
-        : m_element_size(element_size), m_alignment(alignment) {}
+    ComponentColumn(size_t element_size, size_t alignment, DestroyFunc destroy = nullptr)
+        : m_element_size(element_size), m_alignment(alignment), m_destroy(destroy) {}
 
-    // add a new element, returns pointer to the new slot
+    ~ComponentColumn() {
+        // call destructors on all remaining elements
+        if (m_destroy) {
+            for (size_t i = 0; i < m_count; i++) {
+                m_destroy(get_raw(i));
+            }
+        }
+    }
+
     void* push_back() {
         m_data.resize(m_data.size() + m_element_size);
         m_count++;
         return &m_data[m_data.size() - m_element_size];
     }
 
-    // copy raw bytes into a new slot
     void push_back_copy(const void* src) {
         void* dst = push_back();
         std::memcpy(dst, src, m_element_size);
@@ -35,8 +45,11 @@ public:
     // remove element at index by swapping with the last element
     void swap_remove(size_t index) {
         assert(index < m_count);
+        // destroy the element being removed
+        if (m_destroy) {
+            m_destroy(get_raw(index));
+        }
         if (index < m_count - 1) {
-            // swap with last
             void* dst = get_raw(index);
             void* src = get_raw(m_count - 1);
             std::memcpy(dst, src, m_element_size);
@@ -71,6 +84,7 @@ private:
     size_t m_element_size = 0;
     size_t m_alignment = 1;
     size_t m_count = 0;
+    DestroyFunc m_destroy = nullptr;
 };
 
 // an archetype stores all entities that have the exact same set of components
@@ -83,7 +97,8 @@ public:
     const ComponentSignature& get_signature() const { return m_signature; }
 
     // register a component type's column (called during archetype setup)
-    void add_column(ComponentTypeId type_id, size_t element_size, size_t alignment);
+    void add_column(ComponentTypeId type_id, size_t element_size, size_t alignment,
+                    DestroyFunc destroy = nullptr);
 
     // add an entity to this archetype, returns its row index
     size_t add_entity(Entity entity);

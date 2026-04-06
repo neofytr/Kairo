@@ -71,7 +71,7 @@ Archetype* World::get_or_create_archetype(const ComponentSignature& sig) {
     auto arch = std::make_unique<Archetype>(sig);
     for (auto& type_id : sig.types) {
         auto& meta = m_component_meta[type_id];
-        arch->add_column(type_id, meta.size, meta.alignment);
+        arch->add_column(type_id, meta.size, meta.alignment, meta.destroy);
     }
 
     Archetype* ptr = arch.get();

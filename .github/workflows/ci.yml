@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ libglfw3-dev libgl-dev xvfb
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build engine
+        run: cmake --build build --target kairo_engine -j$(nproc)
+
+      - name: Build games
+        run: cmake --build build --target sandbox --target dungeon -j$(nproc)
+
+      - name: Build tests
+        run: cmake --build build --target kairo_tests -j$(nproc)
+
+      - name: Run tests
+        run: ./build/bin/kairo_tests
+
+  build-debug:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ libglfw3-dev libgl-dev
+
+      - name: Configure (Debug + sanitizers)
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer"
+
+      - name: Build tests
+        run: cmake --build build --target kairo_tests -j$(nproc)
+
+      - name: Run tests with sanitizers
+        run: ./build/bin/kairo_tests

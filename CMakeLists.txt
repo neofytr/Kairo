@@ -56,5 +56,8 @@ add_subdirectory(engine)
 # --- sandbox executable ---
 add_subdirectory(sandbox)
 
+# --- dungeon crawler game ---
+add_subdirectory(dungeon)
+
 # --- tests ---
 add_subdirectory(tests)

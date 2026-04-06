@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kairo Engine - Getting Started</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-vsc-dark-plus.min.css">
+    <style>
+        pre[class*="language-"], code[class*="language-"] {
+            background: var(--bg-code) !important;
+            text-shadow: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-header">
+    <div style="display:flex;align-items:center;gap:16px;">
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation">&#9776;</button>
+        <div class="logo">
+            <h1>Kairo Engine</h1>
+            <span class="subtitle">Getting Started</span>
+        </div>
+    </div>
+    <div class="header-right">
+        <ul class="nav-links">
+            <li><a href="index.html">API Reference</a></li>
+            <li><a href="guide.html" class="active">Getting Started</a></li>
+        </ul>
+        <div class="search-container">
+            <span class="search-icon">&#128269;</span>
+            <input type="text" class="search-input" id="search-input" placeholder="Search docs..." autocomplete="off">
+            <span class="search-shortcut">/</span>
+        </div>
+        <a href="https://github.com/user/kairo" class="github-link" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            GitHub
+        </a>
+    </div>
+</header>
+
+<!-- Mobile overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+    <div class="sidebar-section-title">Guide</div>
+    <a href="#what-is-kairo" data-section="what-is-kairo">What is Kairo</a>
+    <a href="#building" data-section="building">Building from Source</a>
+    <a href="#first-game" data-section="first-game">Your First Game</a>
+    <a href="#project-structure" data-section="project-structure">Project Structure</a>
+    <a href="#new-game-target" data-section="new-game-target">Creating a New Game</a>
+    <a href="#key-concepts" data-section="key-concepts">Key Concepts</a>
+
+    <div class="sidebar-section-title">Reference</div>
+    <a href="index.html">API Reference</a>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+
+<!-- ==================== What is Kairo ==================== -->
+<section class="api-section" id="what-is-kairo">
+<h2>What is Kairo</h2>
+
+<p>Kairo is a 2D game engine written from scratch in C++17. It uses OpenGL 4.6 for rendering and implements all major engine systems without relying on off-the-shelf libraries for its core architecture.</p>
+
+<p>The engine includes:</p>
+<ul>
+    <li>An <strong>archetype-based Entity Component System</strong> (ECS) with compile-time queries</li>
+    <li>A <strong>batch renderer</strong> with texture arrays, layer sorting, and z-depth ordering</li>
+    <li><strong>2D physics</strong> with AABB and circle colliders, spatial grid broadphase, raycasting, and joints</li>
+    <li><strong>2D lighting</strong> with point lights, shadows, and post-processing (bloom, vignette)</li>
+    <li><strong>Lua scripting</strong> with hot-reload support</li>
+    <li>An <strong>ImGui-based editor</strong> with entity hierarchy, inspector, profiler, and gizmos</li>
+    <li><strong>Audio</strong> via miniaudio with spatial sound support</li>
+    <li><strong>Gameplay utilities</strong>: tilemap, A* pathfinding, AI steering, animation state machines, timers, tweens</li>
+    <li><strong>Custom memory allocators</strong>: pool, linear, and stack</li>
+    <li>A <strong>job system</strong> for multithreaded workloads</li>
+</ul>
+
+<p>The engine is roughly 11,000 lines of C++ and comes with a demo top-down arena shooter that exercises most systems end-to-end.</p>
+</section>
+
+<hr>
+
+<!-- ==================== Building from Source ==================== -->
+<section class="api-section" id="building">
+<h2>Building from Source</h2>
+
+<h3>Requirements</h3>
+<ul>
+    <li>C++17 compiler (GCC 9+ or Clang 10+)</li>
+    <li>CMake 3.20+</li>
+    <li>GLFW 3.3+ (install via your package manager)</li>
+</ul>
+
+<p>Everything else is bundled in <code>external/</code>: GLAD, stb_image, ImGui, Lua 5.4, miniaudio, nlohmann/json.</p>
+
+<h3>Build Steps</h3>
+
+<pre><code class="language-cpp">// Install GLFW (Ubuntu/Debian)
+// Run in terminal:
+// sudo apt install libglfw3-dev
+
+// Build
+// cmake -B build -DCMAKE_BUILD_TYPE=Release
+// cmake --build build -j$(nproc)
+
+// Run the demo
+// ./build/bin/sandbox
+
+// Run tests (263 of them)
+// ./build/bin/tests</code></pre>
+
+<p>Or copy-paste these commands directly:</p>
+
+<pre><code class="language-bash"># install GLFW (Ubuntu/Debian)
+sudo apt install libglfw3-dev
+
+# build
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j$(nproc)
+
+# run the demo
+./build/bin/sandbox
+
+# run tests (263 of them)
+./build/bin/tests</code></pre>
+
+<p>Developed on Linux. Should be reasonably portable to other platforms with OpenGL 4.6 support, but Windows and macOS builds have not been tested.</p>
+</section>
+
+<hr>
+
+<!-- ==================== Your First Game ==================== -->
+<section class="api-section" id="first-game">
+<h2>Your First Game</h2>
+
+<p>Here is a minimal Kairo application that creates a white square and moves it across the screen. Let's walk through each part.</p>
+
+<h3>The Full Example</h3>
+
+<pre><code class="language-cpp">#include "core/engine.h"
+#include "core/application.h"
+#include "graphics/renderer.h"
+#include "graphics/camera.h"
+#include "ecs/world.h"
+
+struct Transform { kairo::Vec3 position; float rotation = 0.0f; };
+struct Sprite    { kairo::Vec4 color; kairo::Vec2 size; };
+
+class MyGame : public kairo::Application {
+    kairo::World m_world;
+    kairo::Camera m_camera;
+
+    void on_init() override {
+        m_camera.set_orthographic(1280.0f, 720.0f);
+        auto e = m_world.create();
+        m_world.add_component(e, Transform{{ 0, 0, 0 }});
+        m_world.add_component(e, Sprite{{ 1, 1, 1, 1 }, { 32, 32 }});
+    }
+    void on_update(float dt) override {
+        m_world.query&lt;Transform, Sprite&gt;([&amp;](kairo::Entity, Transform&amp; t, Sprite&amp;) {
+            t.position.x += 50.0f * dt;
+        });
+    }
+    void on_render() override {
+        kairo::Renderer::begin(m_camera);
+        m_world.query&lt;Transform, Sprite&gt;([](kairo::Entity, Transform&amp; t, Sprite&amp; s) {
+            kairo::Renderer::draw_quad(t.position, s.size, t.rotation, s.color);
+        });
+        kairo::Renderer::end();
+    }
+};
+
+int main() {
+    kairo::Engine engine;
+    if (!engine.init({ { "My Game", 1280, 720, true } })) return 1;
+    MyGame game;
+    engine.run(game);
+    engine.shutdown();
+}</code></pre>
+
+<h3>Step-by-Step Breakdown</h3>
+
+<h4>1. Define Components</h4>
+<p>Components are plain C++ structs. They hold data only -- no behavior. Here we define <code>Transform</code> (position and rotation) and <code>Sprite</code> (color and size).</p>
+
+<pre><code class="language-cpp">struct Transform { kairo::Vec3 position; float rotation = 0.0f; };
+struct Sprite    { kairo::Vec4 color; kairo::Vec2 size; };</code></pre>
+
+<h4>2. Create Your Application</h4>
+<p>Subclass <code>kairo::Application</code> and override the lifecycle methods. The engine calls these for you in the right order.</p>
+<ul>
+    <li><code>on_init()</code> -- runs once at startup. Create your entities here.</li>
+    <li><code>on_update(float dt)</code> -- runs every frame with the time since the last frame. Put gameplay logic here.</li>
+    <li><code>on_render()</code> -- runs every frame after update. Draw everything here between <code>begin</code>/<code>end</code>.</li>
+</ul>
+
+<h4>3. Create Entities and Add Components</h4>
+<p><code>m_world.create()</code> returns an <code>Entity</code> handle. Use <code>add_component</code> to attach data to it. The entity's archetype is determined by its set of components.</p>
+
+<pre><code class="language-cpp">auto e = m_world.create();
+m_world.add_component(e, Transform{{ 0, 0, 0 }});
+m_world.add_component(e, Sprite{{ 1, 1, 1, 1 }, { 32, 32 }});</code></pre>
+
+<h4>4. Query and Update</h4>
+<p>The <code>query</code> method iterates over all entities that have the specified components. This is the core ECS pattern: systems operate on components, not on specific entities.</p>
+
+<pre><code class="language-cpp">m_world.query&lt;Transform, Sprite&gt;([&amp;](kairo::Entity, Transform&amp; t, Sprite&amp;) {
+    t.position.x += 50.0f * dt;
+});</code></pre>
+
+<h4>5. Render</h4>
+<p>All draw calls go between <code>Renderer::begin(camera)</code> and <code>Renderer::end()</code>. The renderer batches and sorts everything for you.</p>
+
+<h4>6. Bootstrap and Run</h4>
+<p>In <code>main()</code>, create an <code>Engine</code>, initialize it with a window config, and call <code>run()</code> with your application. The engine manages the game loop, timing, and shutdown.</p>
+</section>
+
+<hr>
+
+<!-- ==================== Project Structure ==================== -->
+<section class="api-section" id="project-structure">
+<h2>Project Structure</h2>
+
+<p>The engine source is organized into modules under <code>engine/</code>:</p>
+
+<pre><code class="language-cpp">engine/
+  core/         // types, platform, logging, time
+  math/         // vectors, matrices, SIMD
+  ecs/          // world, archetypes, entities, queries
+  graphics/     // renderer, shaders, textures, lights, shadows, post-processing
+  input/        // keyboard, mouse, gamepad
+  scene/        // scene stack (push/pop/switch), JSON serialization
+  assets/       // asset loading and caching
+  physics/      // colliders, rigidbodies, spatial grid, raycasting, joints
+  particles/    // emitters, particle pools
+  events/       // event bus, typed events
+  gameplay/     // tilemap, pathfinding, steering, animation
+  editor/       // ImGui panels, gizmos, undo system
+  scripting/    // Lua bindings, hot-reload
+  audio/        // miniaudio wrapper, spatial audio
+  memory/       // pool, linear, stack allocators</code></pre>
+
+<p>The included demo game lives in <code>sandbox/</code>. Third-party dependencies are in <code>external/</code>.</p>
+</section>
+
+<hr>
+
+<!-- ==================== Creating a New Game Target ==================== -->
+<section class="api-section" id="new-game-target">
+<h2>Creating a New Game Target</h2>
+
+<p>To create your own game using Kairo:</p>
+
+<h3>1. Create a Directory</h3>
+<p>Add a new directory alongside <code>sandbox/</code>. For example, <code>my_game/</code>.</p>
+
+<h3>2. Add a CMakeLists.txt</h3>
+<p>Create <code>my_game/CMakeLists.txt</code> that defines your executable and links against the engine:</p>
+
+<pre><code class="language-cpp">// my_game/CMakeLists.txt
+// add_executable(my_game main.cpp)
+// target_link_libraries(my_game PRIVATE kairo_engine)
+// target_include_directories(my_game PRIVATE ${CMAKE_SOURCE_DIR}/engine)</code></pre>
+
+<p>In CMake syntax:</p>
+
+<pre><code class="language-bash">add_executable(my_game main.cpp)
+target_link_libraries(my_game PRIVATE kairo_engine)
+target_include_directories(my_game PRIVATE ${CMAKE_SOURCE_DIR}/engine)</code></pre>
+
+<h3>3. Register It in the Root CMakeLists</h3>
+<p>Add <code>add_subdirectory(my_game)</code> to the root <code>CMakeLists.txt</code>.</p>
+
+<h3>4. Write Your Game</h3>
+<p>Create <code>my_game/main.cpp</code> following the Quick Start pattern: subclass <code>Application</code>, override the lifecycle methods, and set up your ECS world.</p>
+
+<h3>5. Build and Run</h3>
+
+<pre><code class="language-bash">cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j$(nproc)
+./build/bin/my_game</code></pre>
+</section>
+
+<hr>
+
+<!-- ==================== Key Concepts ==================== -->
+<section class="api-section" id="key-concepts">
+<h2>Key Concepts</h2>
+
+<h3>Entity Component System (ECS)</h3>
+<p>Kairo uses an <strong>archetype-based ECS</strong>. This is the core architectural pattern of the engine.</p>
+<ul>
+    <li><strong>Entities</strong> are lightweight handles (64-bit IDs). They have no data or behavior on their own.</li>
+    <li><strong>Components</strong> are plain structs that hold data. An entity's set of components (its "archetype") determines how it is stored in memory.</li>
+    <li><strong>Systems</strong> are functions (or classes) that operate on entities by querying for specific component combinations.</li>
+</ul>
+<p>The archetype approach stores entities with the same component set in contiguous arrays. This means iterating over <code>&lt;Transform, Sprite&gt;</code> touches only packed memory with no indirection, which is extremely cache-friendly.</p>
+<p>See the <a href="index.html#ecs">ECS section</a> in the API reference for full details.</p>
+
+<h3>Scenes</h3>
+<p>Scenes are a higher-level organizational unit. Each <code>Scene</code> owns its own <code>World</code> (ECS instance) and <code>Camera</code>. The <code>SceneManager</code> maintains a stack of scenes:</p>
+<ul>
+    <li><strong>Push</strong> a scene to overlay it (e.g., a pause menu on top of gameplay)</li>
+    <li><strong>Pop</strong> to return to the previous scene</li>
+    <li><strong>Switch</strong> to replace the entire stack (e.g., going from menu to gameplay)</li>
+</ul>
+<p>Enable scene management by setting <code>m_use_scenes = true</code> in your Application subclass. See the <a href="index.html#scenes">Scenes section</a> for the full API.</p>
+
+<h3>The Game Loop</h3>
+<p>Kairo's engine loop runs as follows each frame:</p>
+<ol>
+    <li><strong>Input polling</strong> -- keyboard, mouse, and gamepad state is updated</li>
+    <li><strong>Fixed update</strong> (<code>on_fixed_update</code>) -- runs at a fixed 60 Hz timestep, accumulating time between frames. Use for physics and deterministic logic.</li>
+    <li><strong>Variable update</strong> (<code>on_update</code>) -- runs once per frame with the actual delta time. Use for gameplay, animation, and camera updates.</li>
+    <li><strong>Render</strong> (<code>on_render</code>) -- draw everything. The renderer batches draw calls between <code>begin</code>/<code>end</code>.</li>
+    <li><strong>Editor UI</strong> (<code>on_editor_ui</code>) -- ImGui panels, if the editor is toggled on with F1.</li>
+    <li><strong>Swap buffers</strong> -- present the frame.</li>
+</ol>
+<p>The fixed timestep ensures physics behaves consistently regardless of framerate. The variable timestep gives you smooth rendering and responsive input.</p>
+
+<h3>Where to Go from Here</h3>
+<p>Explore the <a href="index.html">API Reference</a> for detailed documentation of every system. Key sections to read next:</p>
+<ul>
+    <li><a href="index.html#rendering">Rendering</a> -- cameras, textures, sprite sheets, text</li>
+    <li><a href="index.html#input">Input</a> -- keyboard and mouse polling</li>
+    <li><a href="index.html#physics">Physics</a> -- colliders, rigid bodies, raycasting</li>
+    <li><a href="index.html#particles">Particles</a> -- visual effects</li>
+    <li><a href="index.html#audio">Audio</a> -- sound effects and music</li>
+    <li><a href="index.html#scripting">Scripting</a> -- Lua integration and hot-reload</li>
+</ul>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+    Built with <strong>Kairo Engine</strong> | <a href="https://github.com/user/kairo" target="_blank" rel="noopener">View on GitHub</a>
+</footer>
+
+<!-- Prism.js for syntax highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="search.js"></script>
+
+</body>
+</html>

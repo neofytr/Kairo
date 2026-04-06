@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmake --version)",
+      "Bash(g++ --version)",
+      "Bash(pkg-config --libs glfw3)",
+      "Bash(sudo apt-get:*)",
+      "Bash(dpkg -l)",
+      "Bash(snap list:*)",
+      "Read(//usr/include/GLFW/**)",
+      "Bash(pip3 show:*)",
+      "Bash(pip show:*)",
+      "Bash(pip3 install:*)",
+      "Bash(python3 -m venv /tmp/glad-env)",
+      "Bash(/tmp/glad-env/bin/pip install:*)",
+      "Bash(/tmp/glad-env/bin/python -m glad --generator c --out-path . --profile core --api gl=4.6)"
+    ]
+  }
+}
